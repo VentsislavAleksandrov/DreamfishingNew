@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DreamFishingNew</title>
+    <title>@ViewData["Title"] - Dream Fishing </title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
@@ -11,7 +11,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DreamFishingNew</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Dream Fishing</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -22,8 +22,42 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Rods" asp-action="All">Rods</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Reels" asp-action="All">Reels</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Baits" asp-action="All">Baits</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Lines" asp-action="All">Lines</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Clothes" asp-action="All">Clothes</a>
+                        </li>
+                        <div class="dropdown ">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Accessories
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Glasses" asp-action="All">Glasses</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Meters" asp-action="All">Meters</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Bags" asp-action="All">Bags</a>
+                            </div>
+                        </div>
+                        <div class="dropdown offset-2">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Add products and brands
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Brands" asp-action="Add">Brand</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Rods" asp-action="Add">Rods</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Reels" asp-action="Add">Reels</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Baits" asp-action="Add">Baits</a>
+                            </div>
+                        </div>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
