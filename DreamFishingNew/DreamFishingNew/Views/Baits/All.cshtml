@@ -1,1 +1,94 @@
-﻿<h1> Hello rom Baits </h1>
+﻿@using DreamFishingNew.Models.Baits
+
+@model AllBaitsQueryModel
+
+<form method="get">
+    <div class="row mb-5">
+
+        <div class="form-group col-md-3">
+            <label asp-for="SearchTerm"></label>
+            <input asp-for="SearchTerm" class="form-control" placeholder="Enter key word here...">
+        </div>
+
+        <div class="form-group col-md-3">
+            <div class="form-group">
+                <label asp-for="Brand"></label>
+                <select asp-for="Brand" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var brand in Model.Brands)
+                    {
+                        <option value="@brand">@brand</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group col-md-3">
+
+            <div class="form-group">
+                <label asp-for="Sorting"></label>
+                <select asp-for="Sorting" class="form-control">
+                    <option value="0">Min.Price</option>
+                    <option value="1">Max.Price</option>
+                    <option value="2">Brand and model</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group col-md-3">
+            <input class="btn btn-primary" type="submit" value="Search" />
+        </div>
+
+    </div>
+</form>
+
+<div class="row">
+
+
+
+    @foreach (var bait in Model.Baits)
+    {
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <img class="card-img-top mb-3" src="@bait.Image" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">@bait.Brand @bait.Model</h5>
+                    <p class="card-text">@bait.Price</p>
+                    <a asp-controller="Rods" asp-action="Details" asp-route-id="@bait.Id" class="btn btn-primary">Details</a>
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+</div>
+
+@{
+    var previousPage = Model.currentPage - 1;
+    if (previousPage < 1)
+    {
+        previousPage = 1;
+    }
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <a class="btn btn-primary "
+           asp-controller="Baits"
+           asp-action="All"
+           asp-route-currentPage="@previousPage"
+           asp-route-brand="@Model.Brand"
+           asp-route-searchTerm="@Model.SearchTerm"
+           asp-route-sorting="@((int)Model.Sorting)"><<</a>
+    </div>
+    <div class="col-md-6">
+        <a class="btn btn-primary float-right"
+           asp-controller="Baits"
+           asp-action="All"
+           asp-route-currentPage="@(Model.currentPage + 1)"
+           asp-route-brand="@Model.Brand"
+           asp-route-searchTerm="@Model.SearchTerm"
+           asp-route-sorting="@((int)Model.Sorting)">>></a>
+    </div>
+</div>

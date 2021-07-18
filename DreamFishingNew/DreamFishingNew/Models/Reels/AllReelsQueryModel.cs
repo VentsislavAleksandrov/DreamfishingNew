@@ -6,7 +6,7 @@ namespace DreamFishingNew.Models.Reels
 {
     public class AllReelsQueryModel
     {
-         public const int ReelsPerPage = 6;
+        public const int ReelsPerPage = 6;
 
         public string Brand { get; set; }
 
