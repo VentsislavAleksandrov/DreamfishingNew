@@ -1,6 +1,6 @@
-﻿namespace DreamFishingNew.Models.Lines
+﻿namespace DreamFishingNew.Models.Clothes
 {
-    public enum LineSorting
+    public enum ClothesSorting
     {
         MinPrice = 0,
         MaxPrice = 1,
