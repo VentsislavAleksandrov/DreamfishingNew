@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DreamFishingNew.Models.Bags
 {
-    public class AllbagsQueryModel
+    public class AllBagsQueryModel
     {
         public const int BagsPerPage = 6;
 

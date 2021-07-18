@@ -2,6 +2,7 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Bags;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
@@ -15,9 +16,69 @@ namespace DreamFishingNew.Controllers
             this.data = data;
         }
 
-        public IActionResult All()
+        public IActionResult All([FromQuery]AllBagsQueryModel query)
         {
-            return View();
+            var bagsQuery = data.Bags
+                .Include<Bag>("Brand")
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(query.Brand))
+            {
+                bagsQuery = data.Bags
+                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
+                    .ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            {
+                bagsQuery = bagsQuery
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
+                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
+                    )
+                    .ToList();
+            }
+
+            bagsQuery = query.Sorting switch
+            {
+                BagSorting.MinPrice => bagsQuery.OrderBy(x => x.Price).ToList(),
+                BagSorting.MaxPrice => bagsQuery.OrderByDescending(x => x.Price).ToList(),
+                BagSorting.BrandAndModel => bagsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
+                _ => bagsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
+            };
+
+            var bags = bagsQuery
+                .Skip((query.currentPage -1) * AllBagsQueryModel.BagsPerPage)
+                .Take(AllBagsQueryModel.BagsPerPage)
+                .Select(x => new BagListingViewModel
+                {
+                    Id = x.Id,
+                    Model = x.Model,
+                    Brand = x.Brand.Name,
+                    Image = x.Image,
+                    Price = x.Price,
+                })
+                .ToList();
+
+            
+
+
+            var bagBrands = data
+                .Baits
+                .Select(x => x.Brand.Name)
+                .Distinct()
+                .ToList();
+
+
+            var model = new AllBagsQueryModel
+            {
+                Brand = query.Brand,
+                Brands = bagBrands,
+                Bags = bags,
+                Sorting = query.Sorting,
+                SearchTerm = query.SearchTerm,
+            };
+
+            return View(model);
         }
 
         public IActionResult Add()
