@@ -2,6 +2,7 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Meters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
@@ -15,9 +16,69 @@ namespace DreamFishingNew.Controllers
             this.data = data;
         }
 
-        public IActionResult All()
+        public IActionResult All([FromQuery]AllMetersQueryModel query)
         {
-            return View();
+            var metersQuery = data.Meters
+                .Include<Meter>("Brand")
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(query.Brand))
+            {
+                metersQuery = data.Meters
+                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
+                    .ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            {
+                metersQuery = metersQuery
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
+                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
+                    )
+                    .ToList();
+            }
+
+            metersQuery = query.Sorting switch
+            {
+                MeterSorting.MinPrice => metersQuery.OrderBy(x => x.Price).ToList(),
+                MeterSorting.MaxPrice => metersQuery.OrderByDescending(x => x.Price).ToList(),
+                MeterSorting.BrandAndModel => metersQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
+                _ => metersQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
+            };
+
+            var meters = metersQuery
+                .Skip((query.currentPage -1) * AllMetersQueryModel.MetersPerPage)
+                .Take(AllMetersQueryModel.MetersPerPage)
+                .Select(x => new MeterListingViewModel
+                {
+                    Id = x.Id,
+                    Model = x.Model,
+                    Brand = x.Brand.Name,
+                    Image = x.Image,
+                    Price = x.Price,
+                })
+                .ToList();
+
+            
+
+
+            var meterBrands = data
+                .Meters
+                .Select(x => x.Brand.Name)
+                .Distinct()
+                .ToList();
+
+
+            var model = new AllMetersQueryModel
+            {
+                Brand = query.Brand,
+                Brands = meterBrands,
+                Meters = meters,
+                Sorting = query.Sorting,
+                SearchTerm = query.SearchTerm,
+            };
+
+            return View(model);
         }
 
         public IActionResult Add()
