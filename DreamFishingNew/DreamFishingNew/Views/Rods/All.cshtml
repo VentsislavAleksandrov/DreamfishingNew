@@ -3,13 +3,14 @@
 @model AllRodsQueryModel
 
 <form method="get">
+
     <div class="row mb-5">
         <div class="form-group col-md-3">
             <label asp-for="SearchTerm"></label>
             <input asp-for="SearchTerm" class="form-control" placeholder="Enter key word here...">
         </div>
-        <div class="form-group col-md-3">
 
+        <div class="form-group col-md-3">
             <div class="form-group">
                 <label asp-for="Brand"></label>
                 <select asp-for="Brand" class="form-control">
@@ -20,11 +21,9 @@
                     }
                 </select>
             </div>
-
-
         </div>
-        <div class="form-group col-md-3">
 
+        <div class="form-group col-md-3">
             <div class="form-group">
                 <label asp-for="Sorting"></label>
                 <select asp-for="Sorting" class="form-control">
@@ -32,12 +31,10 @@
                     <option value="1">Max.Price</option>
                     <option value="2">Brand and model</option>
                     <option value="3">Lenght</option>
-
                 </select>
             </div>
-
-
         </div>
+
         <div class="form-group col-md-3">
             <input class="btn btn-primary" type="submit" value="Search" />
         </div>

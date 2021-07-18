@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DreamFishingNew.Models.Reels
+﻿namespace DreamFishingNew.Models.Reels
 {
-    public class ReelSorting
+    public enum ReelSorting
     {
+        MinPrice = 0,
+        MaxPrice = 1,
+        BrandAndModel = 2,
     }
 }
