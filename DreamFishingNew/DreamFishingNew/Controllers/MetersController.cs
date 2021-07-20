@@ -120,5 +120,29 @@ namespace DreamFishingNew.Controllers
 
             return RedirectToAction("Add", "Meters");
         }
+
+        public IActionResult Details(int id)
+        {
+
+            var meter = data
+                .Meters
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+
+            var model = new MeterDetailsViewModel
+            {
+                Model = meter.Model,
+                Brand = meter.Brand.Name,
+                Image = meter.Image,
+                Weight = meter.Weight,
+                Description = meter.Description,
+                Length = meter.Length,
+                Price = meter.Price,
+                Quantity = meter.Quantity
+            };
+
+            return View(model);
+        }
     }
 }
