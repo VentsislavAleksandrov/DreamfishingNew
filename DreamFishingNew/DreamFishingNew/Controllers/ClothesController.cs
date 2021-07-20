@@ -123,5 +123,31 @@ namespace DreamFishingNew.Controllers
 
             return RedirectToAction("Add", "Clothes");
         }
+
+        public IActionResult Details(int id)
+        {
+
+            var clothes = data
+                .Clothes
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+
+            var model = new ClothesDetailsViewModel
+            {
+                Model = clothes.Model,
+                Brand = clothes.Brand.Name,
+                Image = clothes.Image,
+                Material = clothes.Material,
+                Size = clothes.Size,
+                Weight = clothes.Weight,
+                Waterproof = clothes.Waterproof ? "Yes" : "No",
+                Description = clothes.Description,
+                Price = clothes.Price,
+                Quantity = clothes.Quantity
+            };
+
+            return View(model);
+        }
     }
 }
