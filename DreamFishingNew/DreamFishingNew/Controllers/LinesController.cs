@@ -121,5 +121,30 @@ namespace DreamFishingNew.Controllers
 
             return RedirectToAction("Add", "Lines");
         }
+
+        public IActionResult Details(int id)
+        {
+
+            var line = data
+                .Lines
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+
+            var model = new LineDetailsViewModel
+            {
+                Model = line.Model,
+                Brand = line.Brand.Name,
+                Image = line.Image,
+                Length = line.Length,
+                Size = line.Size,
+                Weight = line.Weight,
+                Description = line.Description,
+                Price = line.Price,
+                Quantity = line.Quantity
+            };
+
+            return View(model);
+        }
     }
 }
