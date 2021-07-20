@@ -119,5 +119,28 @@ namespace DreamFishingNew.Controllers
 
             return RedirectToAction("Add", "Glasses");
         }
+
+        public IActionResult Details(int id)
+        {
+
+            var glasses = data
+                .Glasses
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+
+            var model = new GlassesDetailsViewModel
+            {
+                Model = glasses.Model,
+                Brand = glasses.Brand.Name,
+                Image = glasses.Image,
+                Weight = glasses.Weight,
+                Description = glasses.Description,
+                Price = glasses.Price,
+                Quantity = glasses.Quantity
+            };
+
+            return View(model);
+        }
     }
 }
