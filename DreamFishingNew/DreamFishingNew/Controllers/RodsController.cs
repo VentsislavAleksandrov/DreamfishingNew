@@ -127,5 +127,32 @@ namespace DreamFishingNew.Controllers
 
             return RedirectToAction("Add", "Rods");
         }
+
+        public IActionResult Details(int id)
+        {
+
+            var rod = data
+                .Rods
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+
+            var model = new RodDetailsViewModel
+            {
+                Model = rod.Model,
+                Brand = rod.Brand.Name,
+                Image = rod.Image,
+                CastingWeight = rod.CastingWeight,
+                Length = rod.Length,
+                PartsCount = rod.PartsCount,
+                Weight = rod.Weight,
+                Type = rod.Type,
+                Description = rod.Description,
+                Price = rod.Price,
+                Quantity = rod.Quantity
+            };
+
+            return View(model);
+        }
     }
 }

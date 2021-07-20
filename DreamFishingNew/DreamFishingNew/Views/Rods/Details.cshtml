@@ -1,0 +1,22 @@
+﻿@using DreamFishingNew.Models.Rods
+
+@model RodDetailsViewModel
+
+<div class="card">
+    <div class="row-md-6"><img class="card-img-top" src="@Model.Image" alt="Card image cap"></div>
+    <div class="row-md-6"><div class="card-body">
+    <h5 class="card-title">@Model.Brand @Model.Model</h5>
+    <p class="card-text">Description: @Model.Description</p>
+    <p class="card-text">Lenght: @Model.Length</p>
+    <p class="card-text">Parts count: @Model.PartsCount</p>
+    <p class="card-text">Weight: @Model.Weight</p>
+    <p class="card-text">Casting weight: @Model.CastingWeight</p>
+    <p class="card-text">Type: @Model.Type</p>
+    <p class="card-text">Price: @Model.Price</p>
+    <p class="card-text">Quantity: @Model.Quantity</p>
+    <a href="#" class="btn btn-primary">Add to Cart</a>
+    </div>
+ </div>
+    
+    
+</div>
