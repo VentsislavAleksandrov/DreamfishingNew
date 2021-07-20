@@ -122,6 +122,29 @@ namespace DreamFishingNew.Controllers
             return RedirectToAction("Add", "Baits");
         }
 
+        public IActionResult Details(int id)
+        {
 
+            var bait = data
+                .Baits
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+
+            var model = new BaitDetailsViewModel
+            {
+                Model = bait.Model,
+                Brand = bait.Brand.Name,
+                Image = bait.Image,
+                Length = bait.Length,
+                Type = bait.Type,
+                Weight = bait.Weight,
+                Description = bait.Description,
+                Price = bait.Price,
+                Quantity = bait.Quantity
+            };
+
+            return View(model);
+        }
     }
 }
