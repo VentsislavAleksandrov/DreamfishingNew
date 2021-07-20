@@ -122,5 +122,31 @@ namespace DreamFishingNew.Controllers
 
             return RedirectToAction("Add","Reels");
         }
+
+        public IActionResult Details(int id)
+        {
+
+            var reel = data
+                .Reels
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+
+            var model = new ReelDetailsViewModel
+            {
+                Model = reel.Model,
+                Brand = reel.Brand.Name,
+                Image = reel.Image,
+                BalbearingsCount = reel.BalbearingsCount,
+                GearRatio = reel.GearRatio,
+                LineCapacity = reel.LineCapacity,
+                Weight = reel.Weight,
+                Description = reel.Description,
+                Price = reel.Price,
+                Quantity = reel.Quantity
+            };
+
+            return View(model);
+        }
     }
 }
