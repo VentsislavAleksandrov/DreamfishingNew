@@ -4,14 +4,16 @@ using DreamFishingNew.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DreamFishingNew.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210725142049_AddUserTable")]
+    partial class AddUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -317,6 +319,9 @@ namespace DreamFishingNew.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("string");
+
                     b.HasKey("Id");
 
                     b.ToTable("ProductCarts");
@@ -490,7 +495,8 @@ namespace DreamFishingNew.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("ProductCartId");
+                    b.HasIndex("ProductCartId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers");
                 });
@@ -769,8 +775,8 @@ namespace DreamFishingNew.Data.Migrations
             modelBuilder.Entity("DreamFishingNew.Data.Models.User", b =>
                 {
                     b.HasOne("DreamFishingNew.Data.Models.ProductCart", "ProductCart")
-                        .WithMany()
-                        .HasForeignKey("ProductCartId")
+                        .WithOne("User")
+                        .HasForeignKey("DreamFishingNew.Data.Models.User", "ProductCartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -845,6 +851,8 @@ namespace DreamFishingNew.Data.Migrations
                     b.Navigation("Reels");
 
                     b.Navigation("Rods");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

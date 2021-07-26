@@ -3,7 +3,6 @@ using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Rods;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
@@ -16,9 +15,10 @@ namespace DreamFishingNew.Controllers
         {
             this.data = data;
         }
-
+        //Cannot convert type System.Security.Claims.ClaimsPrincipal to DreamfishingNew.Data.Models.ApplicationUser
         public IActionResult All([FromQuery] AllRodsQueryModel query)
         {
+            
             var rodsQuery = data.Rods
                 .Include<Rod>("Brand")
                 .ToList();
@@ -130,7 +130,7 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
-
+            
             var rod = data
                 .Rods
                 .Include("Brand")
