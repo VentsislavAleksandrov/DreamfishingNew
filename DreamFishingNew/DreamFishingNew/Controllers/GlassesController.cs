@@ -142,5 +142,60 @@ namespace DreamFishingNew.Controllers
 
             return View(model);
         }
+
+        public IActionResult Edit(int id)
+        {
+            var model = data.Glasses
+                .Where(x => x.Id == id)
+                .Select(x => new AddGlassesFormModel 
+                {
+                Model = x.Model,
+                Brand = x.Brand.Name,
+                Weight = x.Weight,
+                Description = x.Description,
+                Image = x.Image,
+                Price = x.Price,
+                Quantity = x.Quantity
+                })
+                .FirstOrDefault();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, AddGlassesFormModel item)
+        {
+            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+
+            if (brand == null)
+            {
+                this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
+
+            var glasses = data
+                .Glasses
+                .Include("Brand")
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            glasses.Model = item.Model;
+            glasses.Brand.Name = item.Brand;
+            glasses.Description = item.Description;
+            glasses.Image = item.Image;
+            glasses.Price = item.Price;
+            glasses.Quantity = item.Quantity;
+            glasses.Weight = item.Weight;
+
+            data.SaveChanges();
+
+            return RedirectToAction("All", "Glasses");
+        }
     }
 }
