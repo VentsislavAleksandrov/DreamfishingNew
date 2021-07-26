@@ -54,7 +54,9 @@
                 <div class="card-body">
                     <h5 class="card-title">@meter.Brand @meter.Model</h5>
                     <p class="card-text">@meter.Price</p>
-                    <a asp-controller="Meters" asp-action="Details" asp-route-id="@meter.Id" class="btn btn-primary">View more...</a>
+                    <span> <a asp-controller="Meters" asp-action="Details" asp-route-id="@meter.Id" class="btn btn-info">More</a> </span>
+                    <span> <a asp-controller="Meters" asp-action="Edit" asp-route-id="@meter.Id" class="btn btn-warning">Edit</a> </span>
+                    <span> <a asp-controller="Meters" asp-action="Delete" asp-route-id="@meter.Id" class="btn btn-danger">Delete</a> </span>
                 </div>
             </div>
         </div>
