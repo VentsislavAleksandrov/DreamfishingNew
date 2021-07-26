@@ -148,5 +148,66 @@ namespace DreamFishingNew.Controllers
 
             return View(model);
         }
+
+         public IActionResult Edit(int id)
+        {
+            var model = data.Reels
+                .Where(x => x.Id == id)
+                .Select(x => new AddReelFormModel 
+                {
+                Model = x.Model,
+                Brand = x.Brand.Name,
+                GearRatio = x.GearRatio,
+                BalbearingsCount = x.BalbearingsCount,
+                LineCapacity = x.LineCapacity,
+                Weight = x.Weight,
+                Description = x.Description,
+                Image = x.Image,
+                Price = x.Price,
+                Quantity = x.Quantity
+                })
+                .FirstOrDefault();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, AddReelFormModel item)
+        {
+            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+
+            if (brand == null)
+            {
+                this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
+
+            var reel = data
+                .Reels
+                .Include("Brand")
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            reel.Model = item.Model;
+            reel.Brand.Name = item.Brand;
+            reel.LineCapacity = item.LineCapacity;
+            reel.Description = item.Description;
+            reel.Image = item.Image;
+            reel.GearRatio = item.GearRatio;
+            reel.BalbearingsCount = item.BalbearingsCount;
+            reel.Price = item.Price;
+            reel.Quantity = item.Quantity;
+            reel.Weight = item.Weight;
+
+            data.SaveChanges();
+
+            return RedirectToAction("All", "Reels");
+        }
     }
 }
