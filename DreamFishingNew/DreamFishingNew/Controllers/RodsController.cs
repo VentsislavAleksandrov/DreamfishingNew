@@ -154,5 +154,68 @@ namespace DreamFishingNew.Controllers
 
             return View(model);
         }
+
+        public IActionResult Edit(int id)
+        {
+            var model = data.Rods
+                .Where(x => x.Id == id)
+                .Select(x => new AddRodFormModel 
+                {
+                Model = x.Model,
+                Brand = x.Brand.Name,
+                Length = x.Length,
+                PartsCount = x.PartsCount,
+                CastingWeight = x.CastingWeight,
+                Weight = x.Weight,
+                Description = x.Description,
+                Image = x.Image,
+                Type = x.Type,
+                Price = x.Price,
+                Quantity = x.Quantity
+                })
+                .FirstOrDefault();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, AddRodFormModel item)
+        {
+            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+
+            if (brand == null)
+            {
+                this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
+
+            var rod = data
+                .Rods
+                .Include("Brand")
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            rod.Model = item.Model;
+            rod.Brand.Name = item.Brand;
+            rod.CastingWeight = item.CastingWeight;
+            rod.Description = item.Description;
+            rod.Image = item.Image;
+            rod.Length = item.Length;
+            rod.PartsCount = item.PartsCount;
+            rod.Price = item.Price;
+            rod.Quantity = item.Quantity;
+            rod.Type = item.Type;
+            rod.Weight = item.Weight;
+
+            data.SaveChanges();
+
+            return RedirectToAction("All", "Rods");
+        }
     }
 }
