@@ -149,5 +149,66 @@ namespace DreamFishingNew.Controllers
 
             return View(model);
         }
+
+        public IActionResult Edit(int id)
+        {
+            var model = data.Clothes
+                .Where(x => x.Id == id)
+                .Select(x => new AddClothesFormModel 
+                {
+                Model = x.Model,
+                Brand = x.Brand.Name,
+                Material = x.Material,
+                Size = x.Size,
+                Weight = x.Weight,
+                Description = x.Description,
+                Image = x.Image,
+                Price = x.Price,
+                Quantity = x.Quantity,
+                Waterproof = x.Waterproof ? "yes" : "no"
+                })
+                .FirstOrDefault();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, AddClothesFormModel item)
+        {
+            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+
+            if (brand == null)
+            {
+                this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
+
+            var clothes = data
+                .Clothes
+                .Include("Brand")
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            clothes.Model = item.Model;
+            clothes.Brand.Name = item.Brand;
+            clothes.Size = item.Size;
+            clothes.Description = item.Description;
+            clothes.Image = item.Image;
+            clothes.Waterproof = item.Waterproof.ToLower() == "yes" ? true : false;
+            clothes.Price = item.Price;
+            clothes.Quantity = item.Quantity;
+            clothes.Weight = item.Weight;
+            clothes.Material = item.Material;
+
+            data.SaveChanges();
+
+            return RedirectToAction("All", "Clothes");
+        }
     }
 }
