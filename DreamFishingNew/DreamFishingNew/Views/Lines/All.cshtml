@@ -54,7 +54,9 @@
                 <div class="card-body">
                     <h5 class="card-title">@line.Brand @line.Model</h5>
                     <p class="card-text">@line.Price</p>
-                    <a asp-controller="Lines" asp-action="Details" asp-route-id="@line.Id" class="btn btn-primary">View more...</a>
+                    <span><a asp-controller="Lines" asp-action="Details" asp-route-id="@line.Id" class="btn btn-info">More</a></span>
+                    <span><a asp-controller="Lines" asp-action="Edit" asp-route-id="@line.Id" class="btn btn-warning">Edit</a></span>
+                    <span><a asp-controller="Lines" asp-action="Delete" asp-route-id="@line.Id" class="btn btn-danger">Delete</a></span>
                 </div>
             </div>
         </div>
