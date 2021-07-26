@@ -144,5 +144,62 @@ namespace DreamFishingNew.Controllers
 
             return View(model);
         }
+
+        public IActionResult Edit(int id)
+        {
+            var model = data.Bags
+                .Where(x => x.Id == id)
+                .Select(x => new AddBagFormModel 
+                {
+                Model = x.Model,
+                Brand = x.Brand.Name,
+                Size = x.Size,
+                Weight = x.Weight,
+                Description = x.Description,
+                Image = x.Image,
+                Price = x.Price,
+                Quantity = x.Quantity
+                })
+                .FirstOrDefault();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, AddBagFormModel item)
+        {
+            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+
+            if (brand == null)
+            {
+                this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
+
+            var bag = data
+                .Bags
+                .Include("Brand")
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            bag.Model = item.Model;
+            bag.Brand.Name = item.Brand;
+            bag.Description = item.Description;
+            bag.Image = item.Image;
+            bag.Size = item.Size;
+            bag.Price = item.Price;
+            bag.Quantity = item.Quantity;
+            bag.Weight = item.Weight;
+
+            data.SaveChanges();
+
+            return RedirectToAction("All", "Bags");
+        }
     }
 }
