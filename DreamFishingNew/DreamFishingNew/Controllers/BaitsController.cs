@@ -205,5 +205,18 @@ namespace DreamFishingNew.Controllers
 
             return RedirectToAction("All", "Baits");
         }
+
+        public IActionResult Delete(int id)
+        {
+            var bait = data
+                .Baits
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            data.Baits.Remove(bait);
+            data.SaveChanges();
+
+            return RedirectToAction("All", "Baits");
+        }
     }
 }
