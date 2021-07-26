@@ -220,7 +220,7 @@ namespace DreamFishingNew.Controllers
             data.Reels.Remove(reel);
             data.SaveChanges();
 
-            return RedirectToAction("All", "Rods");
+            return RedirectToAction("All", "Reels");
         }
     }
 }

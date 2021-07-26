@@ -1,14 +1,14 @@
-﻿@using DreamFishingNew.Models.Reels
+﻿@using DreamFishingNew.Models.Baits
 
-@model AddReelFormModel
+@model AddBaitFormModel
 
 @{
-    ViewData["Title"] = "Add Reel";
+    ViewData["Title"] = "Edit Bait";
 }
 
 <div class="row">
     <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
-        <h2 class="heading-margin text-center">Edit Reel</h2>
+        <h2 class="heading-margin text-center">Edit Bait</h2>
 
         <form method="post">
             <div class="form-group">
@@ -37,14 +37,9 @@
                 <span asp-validation-for="Weight" class="small text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="BalbearingsCount"></label>
-                <input asp-for="BalbearingsCount" class="form-control" placeholder="@Model.BalbearingsCount">
-                <span asp-validation-for="BalbearingsCount" class="small text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GearRatio"></label>
-                <input asp-for="GearRatio" class="form-control" placeholder="@Model.GearRatio">
-                <span asp-validation-for="GearRatio" class="small text-danger"></span>
+                <label asp-for="Length"></label>
+                <input asp-for="Length" class="form-control" placeholder="@Model.Length">
+                <span asp-validation-for="Length" class="small text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Price"></label>
@@ -57,10 +52,11 @@
                 <span asp-validation-for="Quantity" class="small text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LineCapacity"></label>
-                <input asp-for="LineCapacity" class="form-control" placeholder="@Model.LineCapacity">
-                <span asp-validation-for="LineCapacity" class="small text-danger"></span>
+                <label asp-for="Type"></label>
+                <input asp-for="Type" class="form-control" placeholder="@Model.Type">
+                <span asp-validation-for="Type" class="small text-danger"></span>
             </div>
+
 
             <input class="btn btn-primary" type="submit" value="Save" />
         </form>
