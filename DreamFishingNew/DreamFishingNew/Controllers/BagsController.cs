@@ -1,12 +1,16 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
+using DreamFishingNew.Infrastructure;
 using DreamFishingNew.Models.Bags;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
+    using static WebConstants;
+
     public class BagsController: Controller
     {
         private ApplicationDbContext data;
@@ -81,12 +85,14 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBagFormModel bag)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == bag.Brand.ToLower());
@@ -123,6 +129,11 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
+            var UserId = this.User.Id();
+
+            var currUser = data.Users.Where(x => x.Id == UserId);
+
+            var pk = currUser.Select(x => x.ProductCart).FirstOrDefault();
 
             var meter = data
                 .Bags
@@ -145,6 +156,7 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
             var model = data.Bags
@@ -166,6 +178,7 @@ namespace DreamFishingNew.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddBagFormModel item)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
@@ -202,6 +215,7 @@ namespace DreamFishingNew.Controllers
             return RedirectToAction("All", "Bags");
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
             var bag = data

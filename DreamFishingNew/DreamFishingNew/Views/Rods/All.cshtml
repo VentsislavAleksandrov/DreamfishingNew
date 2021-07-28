@@ -56,9 +56,13 @@
                 <p class="card-text">@rod.Type</p>
                 <p class="card-text">@rod.Price</p>
                 <span> <a asp-controller="Rods" asp-action="Details" asp-route-id="@rod.Id" class="btn btn-info">More</a> </span>
-                <span> <a asp-controller="Rods" asp-action="Edit" asp-route-id="@rod.Id" class="btn btn-warning">Edit</a> </span>
-                <span> <a asp-controller="Rods" asp-action="Delete" asp-route-id="@rod.Id" class="btn btn-danger">Delete</a> </span>
-                
+                @if (User.IsInRole("Administrator"))
+                {
+                    <span> <a asp-controller="Rods" asp-action="Edit" asp-route-id="@rod.Id" class="btn btn-warning">Edit</a> </span>
+                    <span> <a asp-controller="Rods" asp-action="Delete" asp-route-id="@rod.Id" class="btn btn-danger">Delete</a> </span>
+                }
+
+
             </div>
         </div>
     </div>

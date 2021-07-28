@@ -1,7 +1,4 @@
-﻿using DreamFishingNew.Data.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace DreamFishingNew.Infrastructure
 {

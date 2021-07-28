@@ -1,12 +1,15 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Baits;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
+    using static WebConstants;
+
     public class BaitsController:Controller
     {
         private ApplicationDbContext data;
@@ -81,12 +84,14 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBaitFormModel bait)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == bait.Brand.ToLower());
@@ -147,6 +152,7 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
             var model = data.Baits
@@ -169,6 +175,7 @@ namespace DreamFishingNew.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddBaitFormModel item)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
@@ -206,6 +213,7 @@ namespace DreamFishingNew.Controllers
             return RedirectToAction("All", "Baits");
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
             var bait = data

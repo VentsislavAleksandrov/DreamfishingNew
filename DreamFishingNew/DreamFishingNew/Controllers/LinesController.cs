@@ -1,12 +1,15 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Lines;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
+    using static WebConstants;
+
     public class LinesController: Controller
     {
         private ApplicationDbContext data;
@@ -81,12 +84,14 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddLineFormModel line)
         {
              var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == line.Brand.ToLower());
@@ -146,6 +151,8 @@ namespace DreamFishingNew.Controllers
 
             return View(model);
         }
+
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
             var model = data.Lines
@@ -168,6 +175,7 @@ namespace DreamFishingNew.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddLineFormModel item)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
@@ -205,6 +213,7 @@ namespace DreamFishingNew.Controllers
             return RedirectToAction("All", "Lines");
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
             var line = data

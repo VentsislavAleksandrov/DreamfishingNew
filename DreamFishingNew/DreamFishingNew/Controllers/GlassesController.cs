@@ -1,12 +1,15 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Glasses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
+    using static WebConstants;
+
     public class GlassesController: Controller
     {
         private ApplicationDbContext data;
@@ -81,12 +84,14 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
          public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddGlassesFormModel glasses)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == glasses.Brand.ToLower());
@@ -143,6 +148,7 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
             var model = data.Glasses
@@ -163,6 +169,7 @@ namespace DreamFishingNew.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddGlassesFormModel item)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
@@ -198,6 +205,7 @@ namespace DreamFishingNew.Controllers
             return RedirectToAction("All", "Glasses");
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
             var glasses = data

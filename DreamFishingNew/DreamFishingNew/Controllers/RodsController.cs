@@ -1,12 +1,15 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Rods;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
+    using static WebConstants;
+
     public class RodsController: Controller
     {
         private ApplicationDbContext data;
@@ -85,12 +88,14 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddRodFormModel rod)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == rod.Brand.ToLower());
@@ -155,6 +160,7 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
             var model = data.Rods
@@ -179,6 +185,7 @@ namespace DreamFishingNew.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddRodFormModel item)
         {
             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
@@ -218,6 +225,7 @@ namespace DreamFishingNew.Controllers
             return RedirectToAction("All", "Rods");
         }
 
+        [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
             var rod = data

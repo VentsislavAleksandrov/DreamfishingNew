@@ -55,8 +55,12 @@
                     <h5 class="card-title">@glasses.Brand @glasses.Model</h5>
                     <p class="card-text">@glasses.Price</p>
                     <span> <a asp-controller="Glasses" asp-action="Details" asp-route-id="@glasses.Id" class="btn btn-info">More</a> </span>
-                    <span> <a asp-controller="Glasses" asp-action="Edit" asp-route-id="@glasses.Id" class="btn btn-warning">Edit</a> </span>
-                    <span> <a asp-controller="Glasses" asp-action="Delete" asp-route-id="@glasses.Id" class="btn btn-danger">Delete</a> </span>
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <span> <a asp-controller="Glasses" asp-action="Edit" asp-route-id="@glasses.Id" class="btn btn-warning">Edit</a> </span>
+                        <span> <a asp-controller="Glasses" asp-action="Delete" asp-route-id="@glasses.Id" class="btn btn-danger">Delete</a> </span>
+                    }
+
                 </div>
             </div>
         </div>

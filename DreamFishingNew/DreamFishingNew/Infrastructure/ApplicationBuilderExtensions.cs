@@ -16,6 +16,7 @@ namespace DreamFishingNew.Infrastructure
             this IApplicationBuilder app)
         {
             
+
             using var scopedServices = app.ApplicationServices.CreateScope();
             var serviceProvider = scopedServices.ServiceProvider;
 

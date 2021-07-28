@@ -24,7 +24,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                       
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Rods" asp-action="All">Rods</a>
                         </li>
@@ -51,22 +51,26 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Bags" asp-action="All">Bags</a>
                             </div>
                         </div>
-                        <div class="dropdown offset-2">
-                            <button class="btn btn-secondary dropdown-toggle bg-transparent" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Add products and brands
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Brands" asp-action="Add">Brand</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Rods" asp-action="Add">Rods</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Reels" asp-action="Add">Reels</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Baits" asp-action="Add">Baits</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Lines" asp-action="Add">Lines</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Glasses" asp-action="Add">Glasses</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Meters" asp-action="Add">Meters</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Bags" asp-action="Add">Bags</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Clothes" asp-action="Add">Clothes</a>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <div class="dropdown offset-2">
+                                <button class="btn btn-secondary dropdown-toggle bg-transparent" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Add products and brands
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Brands" asp-action="Add">Brand</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Rods" asp-action="Add">Rod</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Reels" asp-action="Add">Reel</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Baits" asp-action="Add">Bait</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Lines" asp-action="Add">Line</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Glasses" asp-action="Add">Glasses</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Meters" asp-action="Add">Meter</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Bags" asp-action="Add">Bag</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Clothes" asp-action="Add">Clothes</a>
+                                </div>
                             </div>
-                        </div>
+                        }
+
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
