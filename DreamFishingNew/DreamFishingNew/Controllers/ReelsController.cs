@@ -138,6 +138,7 @@ namespace DreamFishingNew.Controllers
 
             var model = new ReelDetailsViewModel
             {
+                Id = reel.Id,
                 Model = reel.Model,
                 Brand = reel.Brand.Name,
                 Image = reel.Image,

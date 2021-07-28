@@ -135,7 +135,7 @@ namespace DreamFishingNew.Controllers
 
             var pk = currUser.Select(x => x.ProductCart).FirstOrDefault();
 
-            var meter = data
+            var bag = data
                 .Bags
                 .Include("Brand")
                 .FirstOrDefault(x => x.Id == id);
@@ -143,18 +143,32 @@ namespace DreamFishingNew.Controllers
 
             var model = new BagDetailsViewModel
             {
-                Model = meter.Model,
-                Brand = meter.Brand.Name,
-                Image = meter.Image,
-                Weight = meter.Weight,
-                Description = meter.Description,
-                Size = meter.Size,
-                Price = meter.Price,
-                Quantity = meter.Quantity
+                Id = bag.Id,
+                Model = bag.Model,
+                Brand = bag.Brand.Name,
+                Image = bag.Image,
+                Weight = bag.Weight,
+                Description = bag.Description,
+                Size = bag.Size,
+                Price = bag.Price,
+                Quantity = bag.Quantity
             };
 
             return View(model);
         }
+
+        public IActionResult AddtoCart(int id, string userId)
+        {
+            var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
+            var currBag = data.Bags.FirstOrDefault(x => x.Id == id);
+            var bagModel = currBag.Model;
+
+            currUser.ProductCart.Bags.Add(currBag);
+
+            data.SaveChanges();
+            return View();
+        }
+
 
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)

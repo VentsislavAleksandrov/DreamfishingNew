@@ -136,6 +136,7 @@ namespace DreamFishingNew.Controllers
 
             var model = new MeterDetailsViewModel
             {
+                Id = meter.Id,
                 Model = meter.Model,
                 Brand = meter.Brand.Name,
                 Image = meter.Image,

@@ -136,6 +136,7 @@ namespace DreamFishingNew.Controllers
 
             var model = new GlassesDetailsViewModel
             {
+                Id = glasses.Id,
                 Model = glasses.Model,
                 Brand = glasses.Brand.Name,
                 Image = glasses.Image,

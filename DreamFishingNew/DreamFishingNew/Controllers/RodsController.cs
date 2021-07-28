@@ -144,6 +144,7 @@ namespace DreamFishingNew.Controllers
 
             var model = new RodDetailsViewModel
             {
+                Id = rod.Id,
                 Model = rod.Model,
                 Brand = rod.Brand.Name,
                 Image = rod.Image,

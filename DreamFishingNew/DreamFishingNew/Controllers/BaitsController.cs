@@ -138,6 +138,7 @@ namespace DreamFishingNew.Controllers
 
             var model = new BaitDetailsViewModel
             {
+                Id = bait.Id,
                 Model = bait.Model,
                 Brand = bait.Brand.Name,
                 Image = bait.Image,

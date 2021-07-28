@@ -138,6 +138,7 @@ namespace DreamFishingNew.Controllers
 
             var model = new LineDetailsViewModel
             {
+                Id = line.Id,
                 Model = line.Model,
                 Brand = line.Brand.Name,
                 Image = line.Image,
