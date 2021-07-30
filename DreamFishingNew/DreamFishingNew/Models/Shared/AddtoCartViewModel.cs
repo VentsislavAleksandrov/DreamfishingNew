@@ -1,4 +1,4 @@
-﻿namespace DreamFishingNew.Models.Bags
+﻿namespace DreamFishingNew.Models.Shared
 {
     public class AddtoCartViewModel
     {

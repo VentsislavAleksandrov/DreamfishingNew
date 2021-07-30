@@ -2,6 +2,7 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Infrastructure;
 using DreamFishingNew.Models.Bags;
+using DreamFishingNew.Models.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -160,7 +161,7 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id, string userId)
         {
-            var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
+            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currBag = data
                 .Bags
                 .Include("Brand")

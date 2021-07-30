@@ -1,4 +1,4 @@
-﻿@using DreamFishingNew.Models.Bags
+﻿@using DreamFishingNew.Models.Shared
 
 @model AddtoCartViewModel
 
@@ -6,18 +6,20 @@
     ViewData["Title"] = "Add Bag";
 }
 
-@if (Model.Quantity == 0)
-{
-    <h1>Product is out of stock.</h1>
-}
-else
-{
-    <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="@Model.Image" alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title">You have succesfully aded @Model.Brand @Model.Model to your cart.</h5>
-        </div>
-    </div>
-}
+ @if (Model.Quantity == 0)
+ {
+ <h1>Product is out of stock.</h1>
+ }
+ else
+ {
+     
+     <div class="card col-md-6" >
+          <img class="card-img-top" src="@Model.Image" alt="Card image cap">
+          <div class="card-body">
+          <h5 class="card-title">You have succesfully aded @Model.Brand @Model.Model to your cart.</h5>
+          </div>
+     </div>
+ 
+ }
 
 
