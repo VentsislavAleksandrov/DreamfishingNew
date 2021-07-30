@@ -1,6 +1,7 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Glasses;
+using DreamFishingNew.Models.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -147,6 +148,34 @@ namespace DreamFishingNew.Controllers
             };
 
             return View(model);
+        }
+
+        [Authorize]
+        public IActionResult AddtoCart(int id, string userId)
+        {
+            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
+            var currGlasses = data
+                .Glasses
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+            currGlasses.Quantity--;
+
+            if (currGlasses.Quantity < 0)
+            {
+                currGlasses.Quantity = 0;
+            }
+
+            var bagModel = new AddtoCartViewModel
+            {
+                Model = currGlasses.Model,
+                Brand = currGlasses.Brand.Name,
+                Image = currGlasses.Image, 
+                Quantity = currGlasses.Quantity
+            };
+
+            data.SaveChanges();
+            return View(bagModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]
