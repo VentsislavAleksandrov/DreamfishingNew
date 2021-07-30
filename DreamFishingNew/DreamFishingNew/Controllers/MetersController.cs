@@ -1,6 +1,7 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Meters;
+using DreamFishingNew.Models.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -148,6 +149,34 @@ namespace DreamFishingNew.Controllers
             };
 
             return View(model);
+        }
+
+        [Authorize]
+        public IActionResult AddtoCart(int id, string userId)
+        {
+            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
+            var currMeter = data
+                .Meters
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
+
+            currMeter.Quantity--;
+
+            if (currMeter.Quantity < 0)
+            {
+                currMeter.Quantity = 0;
+            }
+
+            var bagModel = new AddtoCartViewModel
+            {
+                Model = currMeter.Model,
+                Brand = currMeter.Brand.Name,
+                Image = currMeter.Image, 
+                Quantity = currMeter.Quantity
+            };
+
+            data.SaveChanges();
+            return View(bagModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]
