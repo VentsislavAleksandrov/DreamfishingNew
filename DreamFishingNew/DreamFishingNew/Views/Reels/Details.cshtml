@@ -1,21 +1,22 @@
 ﻿@using DreamFishingNew.Models.Reels
+@using DreamFishingNew.Infrastructure
 
 @model ReelDetailsViewModel
-    <div class="row">
-        <div class="card">
-            <div class="row-md-6"><img class="card-img-top" src="@Model.Image" alt="Card image cap"></div>
-            <div class="row-md-6">
-                <div class="card-body">
-                    <h5 class="card-title">@Model.Brand @Model.Model</h5>
-                    <p class="card-text">@Model.Description</p>
-                    <p class="card-text">Balbearing count: @Model.BalbearingsCount</p>
-                    <p class="card-text">Gear ratio: @Model.GearRatio</p>
-                    <p class="card-text">Weight: @Model.Weight</p>
-                    <p class="card-text">Line capacity: @Model.LineCapacity</p>
-                    <p class="card-text">Price: @(Model.Price)lv</p>
-                    <p class="card-text">Quantity: @Model.Quantity</p>
-                    <a href="#" class="btn btn-primary">Add to Cart</a>
-                </div>
+<div class="row">
+    <div class="card">
+        <div class="row-md-6"><img class="card-img-top" src="@Model.Image" alt="Card image cap"></div>
+        <div class="row-md-6">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Brand @Model.Model</h5>
+                <p class="card-text">@Model.Description</p>
+                <p class="card-text">Balbearing count: @Model.BalbearingsCount</p>
+                <p class="card-text">Gear ratio: @Model.GearRatio</p>
+                <p class="card-text">Weight: @Model.Weight</p>
+                <p class="card-text">Line capacity: @Model.LineCapacity</p>
+                <p class="card-text">Price: @(Model.Price)lv</p>
+                <p class="card-text">Quantity: @Model.Quantity</p>
+                <a asp-controller="Reels" asp-action="AddtoCart" class="btn btn-primary" asp-route-id="@Model.Id" asp-route-userId="@User.Id()">Add to Cart</a>
             </div>
         </div>
     </div>
+</div>

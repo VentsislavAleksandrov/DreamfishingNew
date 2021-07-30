@@ -1,22 +1,24 @@
 ﻿@using DreamFishingNew.Models.Rods
+@using DreamFishingNew.Infrastructure
 
 @model RodDetailsViewModel
 
 <div class="card">
     <div class="row-md-6"><img class="card-img-top" src="@Model.Image" alt="Card image cap"></div>
-    <div class="row-md-6"><div class="card-body">
-    <h5 class="card-title">@Model.Brand @Model.Model</h5>
-    <p class="card-text">@Model.Description</p>
-    <p class="card-text">Lenght: @Model.Length</p>
-    <p class="card-text">Parts count: @Model.PartsCount</p>
-    <p class="card-text">Weight: @Model.Weight</p>
-    <p class="card-text">Casting weight: @Model.CastingWeight</p>
-    <p class="card-text">Type: @Model.Type</p>
-    <p class="card-text">Price: @(Model.Price)lv</p>
-    <p class="card-text">Quantity: @Model.Quantity</p>
-    <a href="#" class="btn btn-primary">Add to Cart</a>
+    <div class="row-md-6">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Brand @Model.Model</h5>
+            <p class="card-text">@Model.Description</p>
+            <p class="card-text">Lenght: @Model.Length</p>
+            <p class="card-text">Parts count: @Model.PartsCount</p>
+            <p class="card-text">Weight: @Model.Weight</p>
+            <p class="card-text">Casting weight: @Model.CastingWeight</p>
+            <p class="card-text">Type: @Model.Type</p>
+            <p class="card-text">Price: @(Model.Price)lv</p>
+            <p class="card-text">Quantity: @Model.Quantity</p>
+            <a asp-controller="Rods" asp-action="AddtoCart" class="btn btn-primary" asp-route-id="@Model.Id" asp-route-userId="@User.Id()">Add to Cart</a>
+        </div>
     </div>
- </div>
-    
-    
+
+
 </div>

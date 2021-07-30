@@ -1,4 +1,5 @@
 ﻿@using DreamFishingNew.Models.Meters
+@using DreamFishingNew.Infrastructure
 
 @model MeterDetailsViewModel
 
@@ -12,7 +13,7 @@
             <p class="card-text">Length: @Model.Length</p>
             <p class="card-text">Price: @(Model.Price)lv</p>
             <p class="card-text">Quantity: @Model.Quantity</p>
-            <a href="#" class="btn btn-primary">Add to Cart</a>
+            <a asp-controller="Meters" asp-action="AddtoCart" class="btn btn-primary" asp-route-id="@Model.Id" asp-route-userId="@User.Id()">Add to Cart</a>
         </div>
     </div>
 
