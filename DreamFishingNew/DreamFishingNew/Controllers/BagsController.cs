@@ -157,16 +157,32 @@ namespace DreamFishingNew.Controllers
             return View(model);
         }
 
+        [Authorize]
         public IActionResult AddtoCart(int id, string userId)
         {
             var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var currBag = data.Bags.FirstOrDefault(x => x.Id == id);
-            var bagModel = currBag.Model;
+            var currBag = data
+                .Bags
+                .Include("Brand")
+                .FirstOrDefault(x => x.Id == id);
 
-            currUser.ProductCart.Bags.Add(currBag);
+            currBag.Quantity--;
+
+            if (currBag.Quantity < 0)
+            {
+                currBag.Quantity = 0;
+            }
+
+            var bagModel = new AddtoCartViewModel
+            {
+                Model = currBag.Model,
+                Brand = currBag.Brand.Name,
+                Image = currBag.Image, 
+                Quantity = currBag.Quantity
+            };
 
             data.SaveChanges();
-            return View();
+            return View(bagModel);
         }
 
 

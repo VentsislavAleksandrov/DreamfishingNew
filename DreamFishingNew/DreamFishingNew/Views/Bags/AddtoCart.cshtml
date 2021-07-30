@@ -1,3 +1,23 @@
-﻿@model string
+﻿@using DreamFishingNew.Models.Bags
 
-<h1>You have succesfully added @Model to your cart.</h1>
+@model AddtoCartViewModel
+
+@{
+    ViewData["Title"] = "Add Bag";
+}
+
+@if (Model.Quantity == 0)
+{
+    <h1>Product is out of stock.</h1>
+}
+else
+{
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="@Model.Image" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">You have succesfully aded @Model.Brand @Model.Model to your cart.</h5>
+        </div>
+    </div>
+}
+
+
