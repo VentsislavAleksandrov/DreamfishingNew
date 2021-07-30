@@ -24,7 +24,7 @@ namespace DreamFishingNew.Controllers
         {
             
             var rodsQuery = data.Rods
-                .Include<Rod>("Brand")
+                .Include("Brand")
                 .ToList();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))

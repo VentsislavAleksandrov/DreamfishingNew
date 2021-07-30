@@ -23,7 +23,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult All([FromQuery]AllGlassesQueryModel query)
         {
             var glassesQuery = data.Glasses
-                .Include<Glasses>("Brand")
+                .Include("Brand")
                 .ToList();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))

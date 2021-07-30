@@ -23,7 +23,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult All([FromQuery]AllReelsQueryModel query)
         {
             var reelsQuery = data.Reels
-                .Include<Reel>("Brand")
+                .Include("Brand")
                 .ToList();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))

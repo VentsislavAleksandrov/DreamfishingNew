@@ -1,6 +1,5 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
-using DreamFishingNew.Infrastructure;
 using DreamFishingNew.Models.Bags;
 using DreamFishingNew.Models.Shared;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +23,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult All([FromQuery]AllBagsQueryModel query)
         {
             var bagsQuery = data.Bags
-                .Include<Bag>("Brand")
+                .Include("Brand")
                 .ToList();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
@@ -130,11 +129,7 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
-            var UserId = this.User.Id();
-
-            var currUser = data.Users.Where(x => x.Id == UserId);
-
-            var pk = currUser.Select(x => x.ProductCart).FirstOrDefault();
+            
 
             var bag = data
                 .Bags

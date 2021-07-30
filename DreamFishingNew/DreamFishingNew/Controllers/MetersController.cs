@@ -22,7 +22,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult All([FromQuery]AllMetersQueryModel query)
         {
             var metersQuery = data.Meters
-                .Include<Meter>("Brand")
+                .Include("Brand")
                 .ToList();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))

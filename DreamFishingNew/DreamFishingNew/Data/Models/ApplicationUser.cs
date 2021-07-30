@@ -7,6 +7,8 @@ namespace DreamFishingNew.Data.Models
         public int ProductCartId { get; set; }
         public ProductCart ProductCart { get; set; } = new ProductCart();
 
+
+
       
     }
 }
