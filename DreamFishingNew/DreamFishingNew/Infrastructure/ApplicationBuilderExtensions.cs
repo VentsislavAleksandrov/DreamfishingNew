@@ -38,7 +38,10 @@ namespace DreamFishingNew.Infrastructure
             Task
                 .Run(async () =>
                 {
-                    
+                    if (await roleManager.RoleExistsAsync(AdministratorRoleName))
+                    {
+                        return;
+                    }
 
                     var role = new IdentityRole { Name = AdministratorRoleName };
 
