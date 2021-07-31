@@ -2,6 +2,7 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Baits;
 using DreamFishingNew.Models.Shared;
+using DreamFishingNew.Services.Baits;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,63 +15,32 @@ namespace DreamFishingNew.Controllers
     public class BaitsController:Controller
     {
         private ApplicationDbContext data;
-
-        public BaitsController(ApplicationDbContext data)
+        private IBaitService baitService;
+        public BaitsController(ApplicationDbContext data, IBaitService baitService)
         {
             this.data = data;
+            this.baitService = baitService;
         }
 
         public IActionResult All([FromQuery]AllBaitsQueryModel query)
         {
-            var baitsQuery = data.Baits
-                .Include("Brand")
-                .ToList();
+            var baitsQuery = baitService.GetAllBaits();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                baitsQuery = data.Baits
-                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
-                    .ToList();
+                baitsQuery = baitService.GetBaitsByBrand(baitsQuery, query);
             }
 
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
             {
-                baitsQuery = baitsQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
-                    .ToList();
+                baitsQuery = baitService.GetBaitsBySearchTerm(baitsQuery, query);
             }
 
-            baitsQuery = query.Sorting switch
-            {
-                BaitSorting.MinPrice => baitsQuery.OrderBy(x => x.Price).ToList(),
-                BaitSorting.MaxPrice => baitsQuery.OrderByDescending(x => x.Price).ToList(),
-                BaitSorting.BrandAndModel => baitsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
-                _ => baitsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
-            };
+            baitsQuery = baitService.GetBaitsBySortTerm(query.Sorting, baitsQuery);
 
-            var baits = baitsQuery
-                .Skip((query.currentPage -1) * AllBaitsQueryModel.BaitsPerPage)
-                .Take(AllBaitsQueryModel.BaitsPerPage)
-                .Select(x => new BaitListingViewModel
-                {
-                    Id = x.Id,
-                    Model = x.Model,
-                    Brand = x.Brand.Name,
-                    Image = x.Image,
-                    Price = x.Price,
-                })
-                .ToList();
+            var baits = baitService.GetBaitsByPage(baitsQuery, query);
 
-            
-
-
-            var baitBrands = data
-                .Baits
-                .Select(x => x.Brand.Name)
-                .Distinct()
-                .ToList();
+            var baitBrands = baitService.GetBiteBrands();
 
 
             var model = new AllBaitsQueryModel
@@ -95,7 +65,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBaitFormModel bait)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == bait.Brand.ToLower());
+            var brand = baitService.GetBaitBrandByName(bait);
 
             if (brand == null)
             {
@@ -108,22 +78,7 @@ namespace DreamFishingNew.Controllers
                 return View(bait);
             }
 
-
-            var currentBait = new Bait
-            {
-                Model = bait.Model,
-                BrandId = brand.Id,
-                Image = bait.Image,
-                Price = bait.Price,
-                Length = bait.Length,
-                Weight = bait.Weight,
-                Type = bait.Type,
-                Description = bait.Description,
-                Quantity = bait.Quantity
-            };
-
-            data.Baits.Add(currentBait);
-            data.SaveChanges();
+            baitService.CreateBait(bait, brand);
 
             return RedirectToAction("Add", "Baits");
         }
@@ -131,10 +86,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult Details(int id)
         {
 
-            var bait = data
-                .Baits
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var bait = baitService.GetBaitById(id);
 
 
             var model = new BaitDetailsViewModel
@@ -158,10 +110,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult AddtoCart(int id, string userId)
         {
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var currBait = data
-                .Baits
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var currBait = baitService.GetBaitById(id);
 
             currBait.Quantity--;
 
@@ -185,21 +134,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
-            var model = data.Baits
-                .Where(x => x.Id == id)
-                .Select(x => new AddBaitFormModel 
-                {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Length = x.Length,
-                Type = x.Type,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity
-                })
-                .FirstOrDefault();
+            var model = baitService.GetBaitEditModel(id);
 
             return View(model);
         }
@@ -208,7 +143,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddBaitFormModel item)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+            var brand = baitService.GetBaitBrandByName(item);
 
             if (brand == null)
             {
@@ -221,24 +156,7 @@ namespace DreamFishingNew.Controllers
                 return View(item);
             }
 
-
-            var bait = data
-                .Baits
-                .Include("Brand")
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-
-            bait.Model = item.Model;
-            bait.Brand.Name = item.Brand;
-            bait.Length = item.Length;
-            bait.Description = item.Description;
-            bait.Image = item.Image;
-            bait.Type = item.Type;
-            bait.Price = item.Price;
-            bait.Quantity = item.Quantity;
-            bait.Weight = item.Weight;
-
-            data.SaveChanges();
+            baitService.EditBait(id, item);
 
             return RedirectToAction("All", "Baits");
         }
@@ -246,14 +164,10 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
-            var bait = data
-                .Baits
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+            var bait = baitService.GetBaitById(id);
 
-            data.Baits.Remove(bait);
-            data.SaveChanges();
-
+            baitService.DeleteBait(bait);
+   
             return RedirectToAction("All", "Baits");
         }
     }
