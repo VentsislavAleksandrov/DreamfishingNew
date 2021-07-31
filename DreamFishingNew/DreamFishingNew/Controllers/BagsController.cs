@@ -2,6 +2,8 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Bags;
 using DreamFishingNew.Models.Shared;
+using DreamFishingNew.Services.Bags;
+using DreamFishingNew.Services.Brands;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,63 +16,36 @@ namespace DreamFishingNew.Controllers
     public class BagsController: Controller
     {
         private ApplicationDbContext data;
+        private IBagService bagService;
+        private IBrandService brandService;
 
-        public BagsController(ApplicationDbContext data)
+        public BagsController(ApplicationDbContext data, IBagService bagService, IBrandService brandService)
         {
             this.data = data;
+            this.bagService = bagService;
+            this.brandService = brandService;
         }
 
         public IActionResult All([FromQuery]AllBagsQueryModel query)
         {
-            var bagsQuery = data.Bags
-                .Include("Brand")
-                .ToList();
+            var bagsQuery = this.bagService.GetAllBags();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                bagsQuery = data.Bags
-                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
-                    .ToList();
+                bagsQuery = bagService.GetBagsByBrand(query.Brand, bagsQuery);
             }
 
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
             {
-                bagsQuery = bagsQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
-                    .ToList();
+                bagsQuery = bagService.GetBagsBySearchTerm(query.SearchTerm, bagsQuery);
             }
 
-            bagsQuery = query.Sorting switch
-            {
-                BagSorting.MinPrice => bagsQuery.OrderBy(x => x.Price).ToList(),
-                BagSorting.MaxPrice => bagsQuery.OrderByDescending(x => x.Price).ToList(),
-                BagSorting.BrandAndModel => bagsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
-                _ => bagsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
-            };
+            bagsQuery = bagService.SortBagsBySortTerm(query.Sorting, bagsQuery);
 
-            var bags = bagsQuery
-                .Skip((query.currentPage -1) * AllBagsQueryModel.BagsPerPage)
-                .Take(AllBagsQueryModel.BagsPerPage)
-                .Select(x => new BagListingViewModel
-                {
-                    Id = x.Id,
-                    Model = x.Model,
-                    Brand = x.Brand.Name,
-                    Image = x.Image,
-                    Price = x.Price,
-                })
-                .ToList();
-
-            
+            var bags = bagService.GetBagsByPage(query, bagsQuery);
 
 
-            var bagBrands = data
-                .Baits
-                .Select(x => x.Brand.Name)
-                .Distinct()
-                .ToList();
+            var bagBrands = bagService.GetBagBrands();
 
 
             var model = new AllBagsQueryModel
@@ -95,7 +70,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBagFormModel bag)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == bag.Brand.ToLower());
+            var brand = brandService.GetBrand(bag);
 
             if (brand == null)
             {
@@ -109,32 +84,18 @@ namespace DreamFishingNew.Controllers
             }
 
 
-            var currentBag = new Bag
-            {
-                Model = bag.Model,
-                BrandId = brand.Id,
-                Image = bag.Image,
-                Price = bag.Price,
-                Weight = bag.Weight,
-                Size = bag.Size,
-                Description = bag.Description,
-                Quantity = bag.Quantity
-            };
+            bagService.CreateBag(bag, brand);
 
-            data.Bags.Add(currentBag);
-            data.SaveChanges();
+            
 
             return RedirectToAction("Add", "Bags");
         }
 
         public IActionResult Details(int id)
         {
-            
 
-            var bag = data
-                .Bags
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+
+            var bag = bagService.GetBagById(id);
 
 
             var model = new BagDetailsViewModel
@@ -157,10 +118,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult AddtoCart(int id, string userId)
         {
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var currBag = data
-                .Bags
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var currBag = bagService.GetBagById(id);
 
             currBag.Quantity--;
 
@@ -185,20 +143,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
-            var model = data.Bags
-                .Where(x => x.Id == id)
-                .Select(x => new AddBagFormModel 
-                {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Size = x.Size,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity
-                })
-                .FirstOrDefault();
+            var model = bagService.GetBagEditFormModel(id);
 
             return View(model);
         }
@@ -207,7 +152,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddBagFormModel item)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+            var brand = brandService.GetBrandByFormModel(item);
 
             if (brand == null)
             {
@@ -221,22 +166,10 @@ namespace DreamFishingNew.Controllers
             }
 
 
-            var bag = data
-                .Bags
-                .Include("Brand")
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+            var bag = bagService.GetBagById(id);
 
-            bag.Model = item.Model;
-            bag.Brand.Name = item.Brand;
-            bag.Description = item.Description;
-            bag.Image = item.Image;
-            bag.Size = item.Size;
-            bag.Price = item.Price;
-            bag.Quantity = item.Quantity;
-            bag.Weight = item.Weight;
-
-            data.SaveChanges();
+            bagService.Editbag(bag, item);
+            
 
             return RedirectToAction("All", "Bags");
         }
@@ -244,13 +177,9 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
-            var bag = data
-                .Bags
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+            var bag = bagService.GetBagById(id);
 
-            data.Bags.Remove(bag);
-            data.SaveChanges();
+            bagService.DeleteBag(bag);
 
             return RedirectToAction("All", "Bags");
         }
