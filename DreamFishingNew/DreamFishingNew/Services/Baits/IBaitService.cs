@@ -29,5 +29,7 @@ namespace DreamFishingNew.Services.Baits
         void EditBait(int id, AddBaitFormModel item);
 
         void DeleteBait(Bait bait);
+
+        Brand GetBaitBrand(AddBaitFormModel bait);
     }
 }

@@ -2,6 +2,7 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Clothes;
 using DreamFishingNew.Models.Shared;
+using DreamFishingNew.Services.Cloth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,64 +15,32 @@ namespace DreamFishingNew.Controllers
     public class ClothesController: Controller
     {
         private ApplicationDbContext data;
-
-        public ClothesController(ApplicationDbContext data)
+        private IClothService clothService;
+        public ClothesController(ApplicationDbContext data, IClothService clothService)
         {
             this.data = data;
+            this.clothService = clothService;
         }
 
         public IActionResult All([FromQuery]AllClothesQueryModel query)
         {
-            var clothesQuery = data.Clothes
-                .Include("Brand")
-                .ToList();
+            var clothesQuery = clothService.GetAllClothes();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                clothesQuery = data.Clothes
-                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
-                    .ToList();
+                clothesQuery = clothService.GetClothesByBrand(clothesQuery, query);
             }
 
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
             {
-                clothesQuery = clothesQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
-                    .ToList();
+                clothesQuery = clothService.GetClothesBySerchrTerm(clothesQuery, query);
             }
 
-            clothesQuery = query.Sorting switch
-            {
-                ClothesSorting.MinPrice => clothesQuery.OrderBy(x => x.Price).ToList(),
-                ClothesSorting.MaxPrice => clothesQuery.OrderByDescending(x => x.Price).ToList(),
-                ClothesSorting.BrandAndModel => clothesQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
-                _ => clothesQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
-            };
+            clothesQuery = clothService.GetClothesBySortTerm(clothesQuery, query);
 
-            var clothes = clothesQuery
-                .Skip((query.currentPage -1) * AllClothesQueryModel.ClothesPerPage)
-                .Take(AllClothesQueryModel.ClothesPerPage)
-                .Select(x => new ClothesListingViewModel
-                {
-                    Id = x.Id,
-                    Model = x.Model,
-                    Brand = x.Brand.Name,
-                    Image = x.Image,
-                    Price = x.Price,
-                })
-                .ToList();
+            var clothes = clothService.GetClothesByPage(clothesQuery, query);
 
-            
-
-
-            var clothesBrands = data
-                .Clothes
-                .Select(x => x.Brand.Name)
-                .Distinct()
-                .ToList();
-
+            var clothesBrands = clothService.GetClothesBrands();
 
             var model = new AllClothesQueryModel
             {
@@ -95,7 +64,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddClothesFormModel clothes)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == clothes.Brand.ToLower());
+            var brand = clothService.GetClothesBrandByName(clothes);
 
             if (brand == null)
             {
@@ -108,24 +77,7 @@ namespace DreamFishingNew.Controllers
                 return View(clothes);
             }
 
-
-
-            var currentClothes = new Clothes
-            {
-                Model = clothes.Model,
-                BrandId = brand.Id,
-                Image = clothes.Image,
-                Price = clothes.Price,
-                Weight = clothes.Weight,
-                Size = clothes.Size,
-                Waterproof = clothes.Waterproof.ToLower() == "yes",
-                Material = clothes.Material,
-                Description = clothes.Description,
-                Quantity = clothes.Quantity
-            };
-
-            data.Clothes.Add(currentClothes);
-            data.SaveChanges();
+            clothService.CreateClothes(clothes, brand);
 
             return RedirectToAction("Add", "Clothes");
         }
@@ -133,10 +85,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult Details(int id)
         {
 
-            var clothes = data
-                .Clothes
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var clothes = clothService.GetClothesById(id);
 
 
             var model = new ClothesDetailsViewModel
@@ -161,10 +110,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult AddtoCart(int id, string userId)
         {
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var currClothes = data
-                .Clothes
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var currClothes = clothService.GetClothesById(id);
 
             currClothes.Quantity--;
 
@@ -188,22 +134,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
-            var model = data.Clothes
-                .Where(x => x.Id == id)
-                .Select(x => new AddClothesFormModel 
-                {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Material = x.Material,
-                Size = x.Size,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity,
-                Waterproof = x.Waterproof ? "yes" : "no"
-                })
-                .FirstOrDefault();
+            var model = clothService.GetClothesEditModel(id);
 
             return View(model);
         }
@@ -212,7 +143,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddClothesFormModel item)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+            var brand = clothService.GetClothesBrandByName(item);
 
             if (brand == null)
             {
@@ -225,25 +156,7 @@ namespace DreamFishingNew.Controllers
                 return View(item);
             }
 
-
-            var clothes = data
-                .Clothes
-                .Include("Brand")
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-
-            clothes.Model = item.Model;
-            clothes.Brand.Name = item.Brand;
-            clothes.Size = item.Size;
-            clothes.Description = item.Description;
-            clothes.Image = item.Image;
-            clothes.Waterproof = item.Waterproof.ToLower() == "yes" ? true : false;
-            clothes.Price = item.Price;
-            clothes.Quantity = item.Quantity;
-            clothes.Weight = item.Weight;
-            clothes.Material = item.Material;
-
-            data.SaveChanges();
+            clothService.EditClothes(id, item);
 
             return RedirectToAction("All", "Clothes");
         }
@@ -251,13 +164,10 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
-            var clothes = data
-                .Clothes
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
 
-            data.Clothes.Remove(clothes);
-            data.SaveChanges();
+            var clothes = clothService.GetClothesById(id);
+
+            clothService.DeleteClothes(clothes);
 
             return RedirectToAction("All", "Clothes");
         }

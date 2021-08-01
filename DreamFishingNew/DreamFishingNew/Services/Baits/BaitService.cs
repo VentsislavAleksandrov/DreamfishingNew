@@ -70,6 +70,15 @@ namespace DreamFishingNew.Services.Baits
             return baitsQuery;
         }
 
+        public Brand GetBaitBrand(AddBaitFormModel bait)
+        {
+            var brand = data
+                .Brands
+                .FirstOrDefault(x => x.Name.ToLower() == bait.Brand.ToLower());
+
+            return brand;
+        }
+
         public Brand GetBaitBrandByName(AddBaitFormModel bait)
         {
            var brand = data

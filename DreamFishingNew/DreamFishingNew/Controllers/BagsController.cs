@@ -1,13 +1,9 @@
 ﻿using DreamFishingNew.Data;
-using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Bags;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Bags;
-using DreamFishingNew.Services.Brands;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
@@ -17,13 +13,13 @@ namespace DreamFishingNew.Controllers
     {
         private ApplicationDbContext data;
         private IBagService bagService;
-        private IBrandService brandService;
 
-        public BagsController(ApplicationDbContext data, IBagService bagService, IBrandService brandService)
+
+        public BagsController(ApplicationDbContext data, IBagService bagService)
         {
             this.data = data;
             this.bagService = bagService;
-            this.brandService = brandService;
+
         }
 
         public IActionResult All([FromQuery]AllBagsQueryModel query)
@@ -70,7 +66,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBagFormModel bag)
         {
-            var brand = brandService.GetBrand(bag);
+            var brand = bagService.GetBagBrand(bag);
 
             if (brand == null)
             {
@@ -152,7 +148,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddBagFormModel item)
         {
-            var brand = brandService.GetBrandByFormModel(item);
+            var brand = bagService.GetBagBrand(item);
 
             if (brand == null)
             {

@@ -65,6 +65,15 @@ namespace DreamFishingNew.Services.Bags
             return bagsQuery;
         }
 
+        public Brand GetBagBrand(AddBagFormModel bag)
+        {
+            var brand = data
+                .Brands
+                .FirstOrDefault(x => x.Name.ToLower() == bag.Brand.ToLower());
+
+            return brand;
+        }
+
         public ICollection<string> GetBagBrands()
         {
             var bagBrands = data
