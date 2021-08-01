@@ -1,10 +1,11 @@
 using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Infrastructure;
-using DreamFishingNew.Services;
+using DreamFishingNew.Services.Glass;
 using DreamFishingNew.Services.Bags;
 using DreamFishingNew.Services.Baits;
 using DreamFishingNew.Services.Cloth;
+using DreamFishingNew.Services.Lines;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -53,6 +54,7 @@ namespace DreamFishingNew
             services.AddTransient<IBaitService, BaitService>();
             services.AddTransient<IClothService, ClothService>();
             services.AddTransient<IGlassService, GlassService>();
+            services.AddTransient<ILineService, LineService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

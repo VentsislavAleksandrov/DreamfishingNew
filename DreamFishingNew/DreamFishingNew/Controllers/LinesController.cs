@@ -1,10 +1,9 @@
 ﻿using DreamFishingNew.Data;
-using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Lines;
 using DreamFishingNew.Models.Shared;
+using DreamFishingNew.Services.Lines;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DreamFishingNew.Controllers
@@ -14,23 +13,20 @@ namespace DreamFishingNew.Controllers
     public class LinesController: Controller
     {
         private ApplicationDbContext data;
-
-        public LinesController(ApplicationDbContext data)
+        private ILineService lineService;
+        public LinesController(ApplicationDbContext data, ILineService lineService)
         {
             this.data = data;
+            this.lineService = lineService;
         }
 
         public IActionResult All([FromQuery]AllLinesQueryModel query)
         {
-            var linesQuery = data.Lines
-                .Include("Brand")
-                .ToList();
+            var linesQuery = lineService.GetAllLines();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                linesQuery = data.Lines
-                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
-                    .ToList();
+                linesQuery = lineService.GetLinesByBrand(linesQuery, query);
             }
 
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
@@ -42,42 +38,18 @@ namespace DreamFishingNew.Controllers
                     .ToList();
             }
 
-            linesQuery = query.Sorting switch
-            {
-                LineSorting.MinPrice => linesQuery.OrderBy(x => x.Price).ToList(),
-                LineSorting.MaxPrice => linesQuery.OrderByDescending(x => x.Price).ToList(),
-                LineSorting.BrandAndModel => linesQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
-                _ => linesQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
-            };
+            linesQuery = lineService.GetLinesBySortTerm(linesQuery, query);
 
-            var lines = linesQuery
-                .Skip((query.currentPage -1) * AllLinesQueryModel.LinesPerPage)
-                .Take(AllLinesQueryModel.LinesPerPage)
-                .Select(x => new LineListingViewModel
-                {
-                    Id = x.Id,
-                    Model = x.Model,
-                    Brand = x.Brand.Name,
-                    Image = x.Image,
-                    Price = x.Price,
-                })
-                .ToList();
+            var linesByPage = lineService.GetLinesByPage(linesQuery, query);
 
-            
-
-
-            var lineBrands = data
-                .Baits
-                .Select(x => x.Brand.Name)
-                .Distinct()
-                .ToList();
+            var lineBrands = lineService.GetLineBrands();
 
 
             var model = new AllLinesQueryModel
             {
                 Brand = query.Brand,
                 Brands = lineBrands,
-                Lines = lines,
+                Lines = linesByPage,
                 Sorting = query.Sorting,
                 SearchTerm = query.SearchTerm,
             };
@@ -95,7 +67,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddLineFormModel line)
         {
-             var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == line.Brand.ToLower());
+            var brand = lineService.GetLineBrandByName(line);
 
             if (brand == null)
             {
@@ -108,22 +80,7 @@ namespace DreamFishingNew.Controllers
                 return View(line);
             }
 
-
-            var currentLine = new Line
-            {
-                Model = line.Model,
-                BrandId = brand.Id,
-                Image = line.Image,
-                Price = line.Price,
-                Length = line.Length,
-                Weight = line.Weight,
-                Size = line.Size,
-                Description = line.Description,
-                Quantity = line.Quantity
-            };
-
-            data.Lines.Add(currentLine);
-            data.SaveChanges();
+            lineService.CreateLine(line, brand);
 
             return RedirectToAction("Add", "Lines");
         }
@@ -131,10 +88,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult Details(int id)
         {
 
-            var line = data
-                .Lines
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var line = lineService.GetLineById(id);
 
 
             var model = new LineDetailsViewModel
@@ -158,10 +112,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult AddtoCart(int id, string userId)
         {
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var currLine = data
-                .Lines
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var currLine = lineService.GetLineById(id);
 
             currLine.Quantity--;
 
@@ -185,21 +136,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
-            var model = data.Lines
-                .Where(x => x.Id == id)
-                .Select(x => new AddLineFormModel 
-                {              
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Length = x.Length,
-                Size = x.Size,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity
-                })
-                .FirstOrDefault();
+            var model = lineService.GetLineEditModel(id);
 
             return View(model);
         }
@@ -208,7 +145,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddLineFormModel item)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+            var brand = lineService.GetLineBrandByName(item);
 
             if (brand == null)
             {
@@ -221,24 +158,7 @@ namespace DreamFishingNew.Controllers
                 return View(item);
             }
 
-
-            var bait = data
-                .Lines
-                .Include("Brand")
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-
-            bait.Model = item.Model;
-            bait.Brand.Name = item.Brand;
-            bait.Length = item.Length;
-            bait.Description = item.Description;
-            bait.Image = item.Image;
-            bait.Size = item.Size;
-            bait.Price = item.Price;
-            bait.Quantity = item.Quantity;
-            bait.Weight = item.Weight;
-
-            data.SaveChanges();
+            lineService.EditLine(id, item);
 
             return RedirectToAction("All", "Lines");
         }
@@ -246,13 +166,9 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
-            var line = data
-                .Lines
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+            var line = lineService.GetLineById(id);
 
-            data.Lines.Remove(line);
-            data.SaveChanges();
+            lineService.DeleteLine(line);
 
             return RedirectToAction("All", "Lines");
         }

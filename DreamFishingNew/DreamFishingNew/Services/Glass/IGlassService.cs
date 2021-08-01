@@ -2,7 +2,7 @@
 using DreamFishingNew.Models.Glasses;
 using System.Collections.Generic;
 
-namespace DreamFishingNew.Services
+namespace DreamFishingNew.Services.Glass
 {
     public interface IGlassService
     {

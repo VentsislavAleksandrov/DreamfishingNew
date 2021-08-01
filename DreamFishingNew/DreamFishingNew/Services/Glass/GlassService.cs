@@ -1,11 +1,13 @@
 ﻿using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Glasses;
+using DreamFishingNew.Services.Glass;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DreamFishingNew.Services
+namespace DreamFishingNew.Services.Glass
+
 {
     public class GlassService : IGlassService
     {
