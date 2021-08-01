@@ -116,6 +116,8 @@ namespace DreamFishingNew.Controllers
                 currBait.Quantity = 0;
             }
 
+            data.SaveChanges();
+
             var bagModel = new AddtoCartViewModel
             {
                 Model = currBait.Model,
@@ -123,8 +125,7 @@ namespace DreamFishingNew.Controllers
                 Image = currBait.Image, 
                 Quantity = currBait.Quantity
             };
-
-            data.SaveChanges();
+            
             return View(bagModel);
         }
 

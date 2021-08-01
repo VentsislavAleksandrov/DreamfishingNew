@@ -2,6 +2,7 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Rods;
 using DreamFishingNew.Models.Shared;
+using DreamFishingNew.Services.Rods;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,74 +15,40 @@ namespace DreamFishingNew.Controllers
     public class RodsController: Controller
     {
         private ApplicationDbContext data;
-
-        public RodsController(ApplicationDbContext data)
+        private IRodService rodService;
+        public RodsController(ApplicationDbContext data, IRodService rodService)
         {
             this.data = data;
+            this.rodService = rodService;
         }
         //Cannot convert type System.Security.Claims.ClaimsPrincipal to DreamfishingNew.Data.Models.ApplicationUser
         public IActionResult All([FromQuery] AllRodsQueryModel query)
         {
-            
-            var rodsQuery = data.Rods
-                .Include("Brand")
-                .ToList();
+
+            var rodsQuery = rodService.GetAllRods();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                rodsQuery = data.Rods
-                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
-                    .ToList();
+                rodsQuery = rodService.GetRodsByBrand(rodsQuery, query);
             }
 
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
             {
-                rodsQuery = rodsQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Type.ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
-                    .ToList();
+                rodsQuery = rodService.GetRodsBySearchTerm(rodsQuery, query);
             }
 
-            rodsQuery = query.Sorting switch
-            {
-                RodSorting.MinPrice => rodsQuery.OrderBy(x => x.Price).ToList(),
-                RodSorting.MaxPrice => rodsQuery.OrderByDescending(x => x.Price).ToList(),
-                RodSorting.lenght => rodsQuery.OrderByDescending(x => x.Length).ToList(),
-                RodSorting.BrandAndModel => rodsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
-                _ => rodsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
-            };
+            rodsQuery = rodService.GetRodsBySortTerm(rodsQuery, query);
 
-            var rods = rodsQuery
-                .Skip((query.CurrentPage -1) * AllRodsQueryModel.RodsPerPage)
-                .Take(AllRodsQueryModel.RodsPerPage)
-                .Select(x => new RodListingViewModel
-                {
-                    Id = x.Id,
-                    Model = x.Model,
-                    Brand = x.Brand.Name,
-                    Image = x.Image,
-                    Price = x.Price,
-                    Type = x.Type
-                })
-                .ToList();
+            var rodsByPage = rodService.GetRodsByPage(rodsQuery, query);
 
-            
-
-
-            var rodBrands = data
-                .Rods
-                .Select(x => x.Brand.Name)
-                .Distinct()
-                .ToList();
+            var rodBrands = rodService.GetRodBrands();
 
 
             var model = new AllRodsQueryModel
             {
                 Brand = query.Brand,
                 Brands = rodBrands,
-                Rods = rods,
+                Rods = rodsByPage,
                 Sorting = query.Sorting,
                 SearchTerm = query.SearchTerm,
             };
@@ -99,7 +66,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddRodFormModel rod)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == rod.Brand.ToLower());
+            var brand = rodService.GetRodBrandByName(rod);
 
             if (brand == null)
             {
@@ -112,35 +79,15 @@ namespace DreamFishingNew.Controllers
                 return View(rod);
             }
 
-
-            var currentRod = new Rod
-            {
-                Model = rod.Model,
-                BrandId = brand.Id,
-                CastingWeight = rod.CastingWeight,
-                Image = rod.Image,
-                PartsCount = rod.PartsCount,
-                Price = rod.Price,
-                Length = rod.Length,
-                Weight = rod.Weight,
-                Type = rod.Type,
-                Description = rod.Description,
-                Quantity = rod.Quantity
-            };
-
-            data.Rods.Add(currentRod);
-            data.SaveChanges();
+            rodService.CreateRod(rod, brand);
 
             return RedirectToAction("Add", "Rods");
         }
 
         public IActionResult Details(int id)
         {
-            
-            var rod = data
-                .Rods
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+
+            var rod = rodService.GetRodById(id);
 
 
             var model = new RodDetailsViewModel
@@ -166,17 +113,16 @@ namespace DreamFishingNew.Controllers
         public IActionResult AddtoCart(int id, string userId)
         {
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var currRod = data
-                .Rods
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var currRod = rodService.GetRodById(id);
 
             currRod.Quantity--;
 
             if (currRod.Quantity < 0)
             {
                 currRod.Quantity = 0;
-            }
+            } 
+
+            data.SaveChanges();
 
             var bagModel = new AddtoCartViewModel
             {
@@ -185,31 +131,14 @@ namespace DreamFishingNew.Controllers
                 Image = currRod.Image, 
                 Quantity = currRod.Quantity
             };
-
-            data.SaveChanges();
+           
             return View(bagModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
-            var model = data.Rods
-                .Where(x => x.Id == id)
-                .Select(x => new AddRodFormModel 
-                {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Length = x.Length,
-                PartsCount = x.PartsCount,
-                CastingWeight = x.CastingWeight,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Type = x.Type,
-                Price = x.Price,
-                Quantity = x.Quantity
-                })
-                .FirstOrDefault();
+            var model = rodService.GetRodEditModel(id);
 
             return View(model);
         }
@@ -218,7 +147,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddRodFormModel item)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+            var brand = rodService.GetRodBrandByName(item);
 
             if (brand == null)
             {
@@ -231,26 +160,7 @@ namespace DreamFishingNew.Controllers
                 return View(item);
             }
 
-
-            var rod = data
-                .Rods
-                .Include("Brand")
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-
-            rod.Model = item.Model;
-            rod.Brand.Name = item.Brand;
-            rod.CastingWeight = item.CastingWeight;
-            rod.Description = item.Description;
-            rod.Image = item.Image;
-            rod.Length = item.Length;
-            rod.PartsCount = item.PartsCount;
-            rod.Price = item.Price;
-            rod.Quantity = item.Quantity;
-            rod.Type = item.Type;
-            rod.Weight = item.Weight;
-
-            data.SaveChanges();
+            rodService.EditRod(id, item);
 
             return RedirectToAction("All", "Rods");
         }
@@ -258,13 +168,9 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
-            var rod = data
-                .Rods
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+            var rod = rodService.GetRodById(id);
 
-            data.Rods.Remove(rod);
-            data.SaveChanges();
+            rodService.DeleteRod(rod);
 
             return RedirectToAction("All", "Rods");
         }

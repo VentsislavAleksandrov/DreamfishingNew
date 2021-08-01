@@ -1,12 +1,9 @@
 ﻿using DreamFishingNew.Data;
-using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Reels;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Reels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
