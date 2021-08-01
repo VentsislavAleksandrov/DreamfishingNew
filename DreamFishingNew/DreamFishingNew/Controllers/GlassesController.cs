@@ -2,6 +2,7 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Glasses;
 using DreamFishingNew.Models.Shared;
+using DreamFishingNew.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,70 +15,39 @@ namespace DreamFishingNew.Controllers
     public class GlassesController: Controller
     {
         private ApplicationDbContext data;
+        private IGlassService glassService;
 
-        public GlassesController(ApplicationDbContext data)
+        public GlassesController(ApplicationDbContext data, IGlassService glassService)
         {
             this.data = data;
+            this.glassService = glassService;
         }
 
         public IActionResult All([FromQuery]AllGlassesQueryModel query)
         {
-            var glassesQuery = data.Glasses
-                .Include("Brand")
-                .ToList();
+            var glassesQuery = glassService.GetAllGlasses();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                glassesQuery = data.Glasses
-                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
-                    .ToList();
+                glassesQuery = glassService.GetGlassesByBrand(query, glassesQuery);
             }
 
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
             {
-                glassesQuery = glassesQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
-                    .ToList();
+                glassesQuery = glassService.GetGlassesBySearchTerm(query, glassesQuery);
             }
 
-            glassesQuery = query.Sorting switch
-            {
-                GlassesSorting.MinPrice => glassesQuery.OrderBy(x => x.Price).ToList(),
-                GlassesSorting.MaxPrice => glassesQuery.OrderByDescending(x => x.Price).ToList(),
-                GlassesSorting.BrandAndModel => glassesQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
-                _ => glassesQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
-            };
+            glassesQuery = glassService.GetGlassesBySortTerm(query, glassesQuery);
 
-            var glasses = glassesQuery
-                .Skip((query.currentPage -1) * AllGlassesQueryModel.GlassesPerPage)
-                .Take(AllGlassesQueryModel.GlassesPerPage)
-                .Select(x => new GlassesListingViewModel
-                {
-                    Id = x.Id,
-                    Model = x.Model,
-                    Brand = x.Brand.Name,
-                    Image = x.Image,
-                    Price = x.Price,
-                })
-                .ToList();
+            var glassesByPage = glassService.GetGlassesByPage(query, glassesQuery);
 
-            
-
-
-            var glassesBrands = data
-                .Glasses
-                .Select(x => x.Brand.Name)
-                .Distinct()
-                .ToList();
-
+            var glassesBrands = glassService.GetGlassesBrands();
 
             var model = new AllGlassesQueryModel
             {
                 Brand = query.Brand,
                 Brands = glassesBrands,
-                Glasses = glasses,
+                Glasses = glassesByPage,
                 Sorting = query.Sorting,
                 SearchTerm = query.SearchTerm,
             };
@@ -95,7 +65,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddGlassesFormModel glasses)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == glasses.Brand.ToLower());
+            var brand = glassService.GetGlassesBrandByName(glasses);
 
             if (brand == null)
             {
@@ -108,20 +78,7 @@ namespace DreamFishingNew.Controllers
                 return View(glasses);
             }
 
-
-            var currentGlasses = new Glasses
-            {
-                Model = glasses.Model,
-                BrandId = brand.Id,
-                Image = glasses.Image,
-                Price = glasses.Price,
-                Weight = glasses.Weight,
-                Description = glasses.Description,
-                Quantity = glasses.Quantity
-            };
-
-            data.Glasses.Add(currentGlasses);
-            data.SaveChanges();
+            glassService.CreateGlasses(glasses, brand);
 
             return RedirectToAction("Add", "Glasses");
         }
@@ -129,10 +86,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult Details(int id)
         {
 
-            var glasses = data
-                .Glasses
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var glasses = glassService.GetGlassesById(id);
 
 
             var model = new GlassesDetailsViewModel
@@ -154,10 +108,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult AddtoCart(int id, string userId)
         {
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var currGlasses = data
-                .Glasses
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var currGlasses = glassService.GetGlassesById(id);
 
             currGlasses.Quantity--;
 
@@ -181,19 +132,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id)
         {
-            var model = data.Glasses
-                .Where(x => x.Id == id)
-                .Select(x => new AddGlassesFormModel 
-                {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity
-                })
-                .FirstOrDefault();
+            var model = glassService.GetGlassesEditFormModel(id);
 
             return View(model);
         }
@@ -202,7 +141,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddGlassesFormModel item)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+            var brand = glassService.GetGlassesBrandByName(item);
 
             if (brand == null)
             {
@@ -215,22 +154,7 @@ namespace DreamFishingNew.Controllers
                 return View(item);
             }
 
-
-            var glasses = data
-                .Glasses
-                .Include("Brand")
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-
-            glasses.Model = item.Model;
-            glasses.Brand.Name = item.Brand;
-            glasses.Description = item.Description;
-            glasses.Image = item.Image;
-            glasses.Price = item.Price;
-            glasses.Quantity = item.Quantity;
-            glasses.Weight = item.Weight;
-
-            data.SaveChanges();
+            glassService.EditGlasses(id, item);
 
             return RedirectToAction("All", "Glasses");
         }
@@ -238,13 +162,9 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
-            var glasses = data
-                .Glasses
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+            var glasses = glassService.GetGlassesById(id);
 
-            data.Glasses.Remove(glasses);
-            data.SaveChanges();
+            glassService.DeleteGlasses(glasses);
 
             return RedirectToAction("All", "Glasses");
         }

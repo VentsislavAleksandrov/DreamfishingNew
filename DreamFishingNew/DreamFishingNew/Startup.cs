@@ -1,6 +1,7 @@
 using DreamFishingNew.Data;
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Infrastructure;
+using DreamFishingNew.Services;
 using DreamFishingNew.Services.Bags;
 using DreamFishingNew.Services.Baits;
 using DreamFishingNew.Services.Cloth;
@@ -51,6 +52,7 @@ namespace DreamFishingNew
             services.AddTransient<IBagService, BagService>();
             services.AddTransient<IBaitService, BaitService>();
             services.AddTransient<IClothService, ClothService>();
+            services.AddTransient<IGlassService, GlassService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
