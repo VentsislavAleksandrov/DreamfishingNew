@@ -2,6 +2,7 @@
 using DreamFishingNew.Data.Models;
 using DreamFishingNew.Models.Reels;
 using DreamFishingNew.Models.Shared;
+using DreamFishingNew.Services.Reels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,70 +15,40 @@ namespace DreamFishingNew.Controllers
     public class ReelsController: Controller
     {
         private ApplicationDbContext data;
+        private IReelService reelService;
 
-        public ReelsController(ApplicationDbContext data)
+        public ReelsController(ApplicationDbContext data, IReelService reelService)
         {
             this.data = data;
+            this.reelService = reelService;
         }
 
         public IActionResult All([FromQuery]AllReelsQueryModel query)
         {
-            var reelsQuery = data.Reels
-                .Include("Brand")
-                .ToList();
+            var reelsQuery = reelService.GetAllReels();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                reelsQuery = data.Reels
-                    .Where(x => x.Brand.Name.ToLower() == query.Brand)
-                    .ToList();
+                reelsQuery = reelService.GetReelsByBrand(reelsQuery, query);
             }
 
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
             {
-                reelsQuery = reelsQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
-                    .ToList();
+                reelsQuery = reelService.GetReelsBySearchTerm(reelsQuery, query);
             }
 
-            reelsQuery = query.Sorting switch
-            {
-                ReelSorting.MinPrice => reelsQuery.OrderBy(x => x.Price).ToList(),
-                ReelSorting.MaxPrice => reelsQuery.OrderByDescending(x => x.Price).ToList(),
-                ReelSorting.BrandAndModel => reelsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList(),
-                _ => reelsQuery.OrderBy(x => x.Brand.Name).ThenBy(x => x.Model).ToList()
-            };
+            reelsQuery = reelService.GetReelsBySortTerm(reelsQuery, query);
 
-            var reels = reelsQuery
-                .Skip((query.currentPage -1) * AllReelsQueryModel.ReelsPerPage)
-                .Take(AllReelsQueryModel.ReelsPerPage)
-                .Select(x => new ReelListingViewModel
-                {
-                    Id = x.Id,
-                    Model = x.Model,
-                    Brand = x.Brand.Name,
-                    Image = x.Image,
-                    Price = x.Price,
-                })
-                .ToList();
+            var reelsByPage = reelService.GetReelsByPage(reelsQuery, query);
 
-            
-
-
-            var reelBrands = data
-                .Reels
-                .Select(x => x.Brand.Name)
-                .Distinct()
-                .ToList();
+            var reelBrands = reelService.GetReelBrands();
 
 
             var model = new AllReelsQueryModel
             {
                 Brand = query.Brand,
                 Brands = reelBrands,
-                Reels = reels,
+                Reels = reelsByPage,
                 Sorting = query.Sorting,
                 SearchTerm = query.SearchTerm,
             };
@@ -95,7 +66,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddReelFormModel reel)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == reel.Brand.ToLower());
+            var brand = reelService.GetReelBrandByName(reel);
 
             if (brand == null)
             {
@@ -107,35 +78,14 @@ namespace DreamFishingNew.Controllers
                 return View(reel);
             }
 
-            var currentReel = new Reel
-            {
-                Model = reel.Model,
-                BrandId = brand.Id,
-                Description = reel.Description,
-                Price = reel.Price,
-                GearRatio = reel.GearRatio,
-                Quantity = reel.Quantity,
-                Image = reel.Image,
-                LineCapacity = reel.LineCapacity,
-                Weight = reel.Weight,
-                BalbearingsCount = reel.BalbearingsCount
-                
-            };
-
-            data.Reels.Add(currentReel);
-            data.SaveChanges();
+            reelService.CreateReel(reel, brand);
 
             return RedirectToAction("Add","Reels");
         }
 
         public IActionResult Details(int id)
         {
-
-            var reel = data
-                .Reels
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
-
+            var reel = reelService.GetReelById(id);
 
             var model = new ReelDetailsViewModel
             {
@@ -159,10 +109,7 @@ namespace DreamFishingNew.Controllers
         public IActionResult AddtoCart(int id, string userId)
         {
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var currReel = data
-                .Reels
-                .Include("Brand")
-                .FirstOrDefault(x => x.Id == id);
+            var currReel = reelService.GetReelById(id);
 
             currReel.Quantity--;
 
@@ -171,6 +118,8 @@ namespace DreamFishingNew.Controllers
                 currReel.Quantity = 0;
             }
 
+            data.SaveChanges();
+
             var bagModel = new AddtoCartViewModel
             {
                 Model = currReel.Model,
@@ -178,30 +127,14 @@ namespace DreamFishingNew.Controllers
                 Image = currReel.Image, 
                 Quantity = currReel.Quantity
             };
-
-            data.SaveChanges();
+           
             return View(bagModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]
          public IActionResult Edit(int id)
         {
-            var model = data.Reels
-                .Where(x => x.Id == id)
-                .Select(x => new AddReelFormModel 
-                {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                GearRatio = x.GearRatio,
-                BalbearingsCount = x.BalbearingsCount,
-                LineCapacity = x.LineCapacity,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity
-                })
-                .FirstOrDefault();
+            var model = reelService.GetReelEditModel(id);
 
             return View(model);
         }
@@ -210,7 +143,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddReelFormModel item)
         {
-            var brand = data.Brands.FirstOrDefault(x => x.Name.ToLower() == item.Brand.ToLower());
+            var brand = reelService.GetReelBrandByName(item);
 
             if (brand == null)
             {
@@ -223,25 +156,7 @@ namespace DreamFishingNew.Controllers
                 return View(item);
             }
 
-
-            var reel = data
-                .Reels
-                .Include("Brand")
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-
-            reel.Model = item.Model;
-            reel.Brand.Name = item.Brand;
-            reel.LineCapacity = item.LineCapacity;
-            reel.Description = item.Description;
-            reel.Image = item.Image;
-            reel.GearRatio = item.GearRatio;
-            reel.BalbearingsCount = item.BalbearingsCount;
-            reel.Price = item.Price;
-            reel.Quantity = item.Quantity;
-            reel.Weight = item.Weight;
-
-            data.SaveChanges();
+            reelService.EditReel(id, item);
 
             return RedirectToAction("All", "Reels");
         }
@@ -249,13 +164,9 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
-            var reel = data
-                .Reels
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+            var reel = reelService.GetReelById(id);
 
-            data.Reels.Remove(reel);
-            data.SaveChanges();
+            reelService.DeleteReel(reel);
 
             return RedirectToAction("All", "Reels");
         }
