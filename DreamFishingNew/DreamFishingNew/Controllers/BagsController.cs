@@ -116,14 +116,7 @@ namespace DreamFishingNew.Controllers
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currBag = bagService.GetBagById(id);
 
-            currBag.Quantity--;
-
-            if (currBag.Quantity < 0)
-            {
-                currBag.Quantity = 0;
-            }
-
-            data.SaveChanges();
+            bagService.DecrementBagQuantity(currBag);
 
             var bagModel = new AddtoCartViewModel
             {

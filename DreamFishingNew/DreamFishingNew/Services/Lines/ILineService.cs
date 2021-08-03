@@ -30,6 +30,6 @@ namespace DreamFishingNew.Services.Lines
 
         void DeleteLine(Line line);
 
-
+        void DecrementLineQuantity(Line currLine);
     }
 }

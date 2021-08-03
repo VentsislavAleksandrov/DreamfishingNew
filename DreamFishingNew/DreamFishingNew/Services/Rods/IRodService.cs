@@ -29,5 +29,7 @@ namespace DreamFishingNew.Services.Rods
         void EditRod(int id, AddRodFormModel rod);
 
         void DeleteRod(Rod rod);
+
+        void DecrementRodQuantity(Rod currRod);
     }
 }

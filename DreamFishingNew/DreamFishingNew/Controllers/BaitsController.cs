@@ -109,16 +109,9 @@ namespace DreamFishingNew.Controllers
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currBait = baitService.GetBaitById(id);
 
-            currBait.Quantity--;
+            baitService.DecrementBaitQuantity(currBait);
 
-            if (currBait.Quantity < 0)
-            {
-                currBait.Quantity = 0;
-            }
-
-            data.SaveChanges();
-
-            var bagModel = new AddtoCartViewModel
+            var baitModel = new AddtoCartViewModel
             {
                 Model = currBait.Model,
                 Brand = currBait.Brand.Name,
@@ -126,7 +119,7 @@ namespace DreamFishingNew.Controllers
                 Quantity = currBait.Quantity
             };
             
-            return View(bagModel);
+            return View(baitModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]

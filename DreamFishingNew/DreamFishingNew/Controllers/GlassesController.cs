@@ -107,16 +107,9 @@ namespace DreamFishingNew.Controllers
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currGlasses = glassService.GetGlassesById(id);
 
-            currGlasses.Quantity--;
+            glassService.DecrementGlassesQuantity(currGlasses);
 
-            if (currGlasses.Quantity < 0)
-            {
-                currGlasses.Quantity = 0;
-            }
-
-            data.SaveChanges();
-
-            var bagModel = new AddtoCartViewModel
+            var glassesModel = new AddtoCartViewModel
             {
                 Model = currGlasses.Model,
                 Brand = currGlasses.Brand.Name,
@@ -124,7 +117,7 @@ namespace DreamFishingNew.Controllers
                 Quantity = currGlasses.Quantity
             };
           
-            return View(bagModel);
+            return View(glassesModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]

@@ -115,16 +115,9 @@ namespace DreamFishingNew.Controllers
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currRod = rodService.GetRodById(id);
 
-            currRod.Quantity--;
+            rodService.DecrementRodQuantity(currRod);
 
-            if (currRod.Quantity < 0)
-            {
-                currRod.Quantity = 0;
-            } 
-
-            data.SaveChanges();
-
-            var bagModel = new AddtoCartViewModel
+            var rodModel = new AddtoCartViewModel
             {
                 Model = currRod.Model,
                 Brand = currRod.Brand.Name,
@@ -132,7 +125,7 @@ namespace DreamFishingNew.Controllers
                 Quantity = currRod.Quantity
             };
            
-            return View(bagModel);
+            return View(rodModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]

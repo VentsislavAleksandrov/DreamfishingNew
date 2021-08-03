@@ -29,5 +29,7 @@ namespace DreamFishingNew.Services.Reels
         void EditReel(int id, AddReelFormModel item);
 
         void DeleteReel(Reel reel);
+
+        void DecrementReelQuantity(Reel currReel);
     }
 }

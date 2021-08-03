@@ -108,16 +108,9 @@ namespace DreamFishingNew.Controllers
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currReel = reelService.GetReelById(id);
 
-            currReel.Quantity--;
+            reelService.DecrementReelQuantity(currReel);
 
-            if (currReel.Quantity < 0)
-            {
-                currReel.Quantity = 0;
-            }
-
-            data.SaveChanges();
-
-            var bagModel = new AddtoCartViewModel
+            var reelModel = new AddtoCartViewModel
             {
                 Model = currReel.Model,
                 Brand = currReel.Brand.Name,
@@ -125,7 +118,7 @@ namespace DreamFishingNew.Controllers
                 Quantity = currReel.Quantity
             };
            
-            return View(bagModel);
+            return View(reelModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]

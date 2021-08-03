@@ -35,6 +35,18 @@ namespace DreamFishingNew.Services.Baits
             data.SaveChanges();
         }
 
+        public void DecrementBaitQuantity(Bait currBait)
+        {
+            currBait.Quantity--;
+
+            if (currBait.Quantity < 0)
+            {
+                currBait.Quantity = 0;
+            }
+
+            data.SaveChanges();
+        }
+
         public void DeleteBait(Bait bait)
         {
             data.Baits.Remove(bait);

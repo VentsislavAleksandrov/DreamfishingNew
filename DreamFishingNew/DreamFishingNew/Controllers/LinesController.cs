@@ -114,16 +114,9 @@ namespace DreamFishingNew.Controllers
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currLine = lineService.GetLineById(id);
 
-            currLine.Quantity--;
+            lineService.DecrementLineQuantity(currLine);
 
-            if (currLine.Quantity < 0)
-            {
-                currLine.Quantity = 0;
-            }
-
-            data.SaveChanges();
-
-            var bagModel = new AddtoCartViewModel
+            var lineModel = new AddtoCartViewModel
             {
                 Model = currLine.Model,
                 Brand = currLine.Brand.Name,
@@ -131,7 +124,7 @@ namespace DreamFishingNew.Controllers
                 Quantity = currLine.Quantity
             };
           
-            return View(bagModel);
+            return View(lineModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]

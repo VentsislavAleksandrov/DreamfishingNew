@@ -36,6 +36,18 @@ namespace DreamFishingNew.Services.Lines
             data.SaveChanges();
         }
 
+        public void DecrementLineQuantity(Line currLine)
+        {
+            currLine.Quantity--;
+
+            if (currLine.Quantity < 0)
+            {
+                currLine.Quantity = 0;
+            }
+
+            data.SaveChanges();
+        }
+
         public void DeleteLine(Line line)
         {
             data.Lines.Remove(line);

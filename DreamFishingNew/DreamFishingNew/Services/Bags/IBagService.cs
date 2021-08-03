@@ -29,5 +29,7 @@ namespace DreamFishingNew.Services.Bags
         void DeleteBag(Bag bag);
 
         Brand GetBagBrand(AddBagFormModel bag);
+
+        void DecrementBagQuantity(Bag bag);
     }
 }

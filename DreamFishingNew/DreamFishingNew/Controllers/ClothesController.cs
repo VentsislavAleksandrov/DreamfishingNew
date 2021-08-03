@@ -109,16 +109,9 @@ namespace DreamFishingNew.Controllers
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currClothes = clothService.GetClothesById(id);
 
-            currClothes.Quantity--;
+            clothService.DecrementClothesQuantity(currClothes);
 
-            if (currClothes.Quantity < 0)
-            {
-                currClothes.Quantity = 0;
-            }
-
-            data.SaveChanges();
-
-            var bagModel = new AddtoCartViewModel
+            var clothesModel = new AddtoCartViewModel
             {
                 Model = currClothes.Model,
                 Brand = currClothes.Brand.Name,
@@ -126,7 +119,7 @@ namespace DreamFishingNew.Controllers
                 Quantity = currClothes.Quantity
             };
             
-            return View(bagModel);
+            return View(clothesModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]

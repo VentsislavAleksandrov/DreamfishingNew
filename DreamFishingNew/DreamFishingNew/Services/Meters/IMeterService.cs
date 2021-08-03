@@ -29,5 +29,7 @@ namespace DreamFishingNew.Services.Meters
         void EditMeter(int id, AddMeterFormModel item);
 
         void DeleteMeter(Meter meter);
+
+        void DecrementMeterQuantity(Meter currMeter);
     }
 }

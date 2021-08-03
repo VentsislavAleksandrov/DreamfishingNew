@@ -37,6 +37,18 @@ namespace DreamFishingNew.Services.Reels
             data.SaveChanges();
         }
 
+        public void DecrementReelQuantity(Reel currReel)
+        {
+            currReel.Quantity--;
+
+            if (currReel.Quantity < 0)
+            {
+                currReel.Quantity = 0;
+            }
+
+            data.SaveChanges();
+        }
+
         public void DeleteReel(Reel reel)
         {
             data.Reels.Remove(reel);

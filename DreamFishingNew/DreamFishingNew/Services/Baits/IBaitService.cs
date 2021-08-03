@@ -31,5 +31,7 @@ namespace DreamFishingNew.Services.Baits
         void DeleteBait(Bait bait);
 
         Brand GetBaitBrand(AddBaitFormModel bait);
+
+        void DecrementBaitQuantity(Bait currBait);
     }
 }

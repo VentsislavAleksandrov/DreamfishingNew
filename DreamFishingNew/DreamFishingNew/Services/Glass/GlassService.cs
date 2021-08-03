@@ -168,5 +168,17 @@ namespace DreamFishingNew.Services.Glass
             data.Glasses.Remove(glasses);
             data.SaveChanges();
         }
+
+        public void DecrementGlassesQuantity(Glasses currGlasses)
+        {
+            currGlasses.Quantity--;
+
+            if (currGlasses.Quantity < 0)
+            {
+                currGlasses.Quantity = 0;
+            }
+
+            data.SaveChanges();
+        }
     }
 }

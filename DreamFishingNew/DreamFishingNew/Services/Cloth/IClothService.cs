@@ -30,6 +30,8 @@ namespace DreamFishingNew.Services.Cloth
 
         void DeleteClothes(Clothes clothes);
 
+        void DecrementClothesQuantity(Clothes currClothes);
+
 
 
     }

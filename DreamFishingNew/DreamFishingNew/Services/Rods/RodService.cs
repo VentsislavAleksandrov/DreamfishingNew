@@ -37,6 +37,18 @@ namespace DreamFishingNew.Services.Rods
             data.SaveChanges();
         }
 
+        public void DecrementRodQuantity(Rod currRod)
+        {
+            currRod.Quantity--;
+
+            if (currRod.Quantity < 0)
+            {
+                currRod.Quantity = 0;
+            } 
+
+            data.SaveChanges();
+        }
+
         public void DeleteRod(Rod rod)
         {
             data.Rods.Remove(rod);

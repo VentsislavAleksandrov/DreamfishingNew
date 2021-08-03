@@ -38,6 +38,18 @@ namespace DreamFishingNew.Services.Cloth
             
         }
 
+        public void DecrementClothesQuantity(Clothes currClothes)
+        {
+            currClothes.Quantity--;
+
+            if (currClothes.Quantity < 0)
+            {
+                currClothes.Quantity = 0;
+            }
+
+            data.SaveChanges();
+        }
+
         public void DeleteClothes(Clothes clothes)
         {
             data.Clothes.Remove(clothes);

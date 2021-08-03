@@ -36,6 +36,18 @@ namespace DreamFishingNew.Services.Bags
            
         }
 
+        public void DecrementBagQuantity(Bag currBag)
+        {
+            currBag.Quantity--;
+
+            if (currBag.Quantity < 0)
+            {
+                currBag.Quantity = 0;
+            }
+
+            data.SaveChanges();
+        }
+
         public void DeleteBag(Bag bag)
         {
             data.Bags.Remove(bag);

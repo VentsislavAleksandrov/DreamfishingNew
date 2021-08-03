@@ -30,5 +30,7 @@ namespace DreamFishingNew.Services.Glass
 
         void DeleteGlasses(Glasses glasses);
 
+        void DecrementGlassesQuantity(Glasses currGlasses);
+
     }
 }

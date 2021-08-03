@@ -34,6 +34,18 @@ namespace DreamFishingNew.Services.Meters
             data.SaveChanges();
         }
 
+        public void DecrementMeterQuantity(Meter currMeter)
+        {
+            currMeter.Quantity--;
+
+            if (currMeter.Quantity < 0)
+            {
+                currMeter.Quantity = 0;
+            }
+
+            data.SaveChanges();
+        }
+
         public void DeleteMeter(Meter meter)
         {
             data.Meters.Remove(meter);

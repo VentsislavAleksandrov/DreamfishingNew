@@ -105,16 +105,9 @@ namespace DreamFishingNew.Controllers
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currMeter = meterService.GetMeterById(id);
 
-            currMeter.Quantity--;
+            meterService.DecrementMeterQuantity(currMeter);
 
-            if (currMeter.Quantity < 0)
-            {
-                currMeter.Quantity = 0;
-            }
-
-            data.SaveChanges();
-
-            var bagModel = new AddtoCartViewModel
+            var meterModel = new AddtoCartViewModel
             {
                 Model = currMeter.Model,
                 Brand = currMeter.Brand.Name,
@@ -122,7 +115,7 @@ namespace DreamFishingNew.Controllers
                 Quantity = currMeter.Quantity
             };
           
-            return View(bagModel);
+            return View(meterModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]
