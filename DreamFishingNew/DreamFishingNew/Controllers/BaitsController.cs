@@ -62,17 +62,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBaitFormModel bait)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View(bait);
+            }
+
             var brand = baitService.GetBaitBrandByName(bait);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(bait.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(bait);
             }
 
             baitService.CreateBait(bait, brand);
@@ -134,17 +134,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddBaitFormModel item)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
             var brand = baitService.GetBaitBrandByName(item);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(item);
             }
 
             baitService.EditBait(id, item);

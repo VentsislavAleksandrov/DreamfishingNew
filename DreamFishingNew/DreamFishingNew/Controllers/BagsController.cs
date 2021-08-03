@@ -28,7 +28,7 @@ namespace DreamFishingNew.Controllers
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                bagsQuery = bagService.GetBagsByBrand(query.Brand, bagsQuery);
+                bagsQuery = bagService.GetBagsByBrand(query, bagsQuery);
             }
 
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
@@ -38,7 +38,7 @@ namespace DreamFishingNew.Controllers
 
             bagsQuery = bagService.SortBagsBySortTerm(query.Sorting, bagsQuery);
 
-            var bags = bagService.GetBagsByPage(query, bagsQuery);
+            var bagsByPage = bagService.GetBagsByPage(query, bagsQuery);
 
 
             var bagBrands = bagService.GetBagBrands();
@@ -48,7 +48,7 @@ namespace DreamFishingNew.Controllers
             {
                 Brand = query.Brand,
                 Brands = bagBrands,
-                Bags = bags,
+                Bags = bagsByPage,
                 Sorting = query.Sorting,
                 SearchTerm = query.SearchTerm,
             };
@@ -66,6 +66,12 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBagFormModel bag)
         {
+ 
+            if (!ModelState.IsValid)
+            {
+                return View(bag);
+            }
+
             var brand = bagService.GetBagBrand(bag);
 
             if (brand == null)
@@ -73,23 +79,13 @@ namespace DreamFishingNew.Controllers
                 this.ModelState.AddModelError(nameof(bag.Brand), "Brand does not exist.");
             }
 
-
-            if (!ModelState.IsValid)
-            {
-                return View(bag);
-            }
-
-
             bagService.CreateBag(bag, brand);
-
-            
-
+          
             return RedirectToAction("Add", "Bags");
         }
 
         public IActionResult Details(int id)
         {
-
 
             var bag = bagService.GetBagById(id);
 
@@ -142,19 +138,18 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddBagFormModel item)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
             var brand = bagService.GetBagBrand(item);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
             }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(item);
-            }
-
 
             var bag = bagService.GetBagById(id);
 

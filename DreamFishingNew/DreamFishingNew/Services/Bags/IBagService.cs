@@ -8,7 +8,7 @@ namespace DreamFishingNew.Services.Bags
     {
         ICollection<Bag> GetAllBags();
 
-        ICollection<Bag> GetBagsByBrand(string bag, ICollection<Bag> bagsQuery);
+        ICollection<Bag> GetBagsByBrand(AllBagsQueryModel query, ICollection<Bag> bagsQuery);
 
         ICollection<Bag> GetBagsBySearchTerm(string searchterm, ICollection<Bag> bagsQuery);
 

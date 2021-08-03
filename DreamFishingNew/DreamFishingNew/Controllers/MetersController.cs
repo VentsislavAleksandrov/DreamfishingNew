@@ -60,17 +60,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddMeterFormModel meter)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                return View(meter);
+            }
+
             var brand = meterService.GetMeterBrandByName(meter);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(meter.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(meter);
             }
 
             meterService.CreateMeter(meter, brand);
@@ -129,18 +129,18 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddMeterFormModel item)
-        {
+        {          
+
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
             var brand = meterService.GetMeterBrandByName(item);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(item);
             }
 
             meterService.EditMeter(id,item);

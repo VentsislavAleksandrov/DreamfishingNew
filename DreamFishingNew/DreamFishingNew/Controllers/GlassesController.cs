@@ -62,17 +62,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddGlassesFormModel glasses)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                return View(glasses);
+            }
+
             var brand = glassService.GetGlassesBrandByName(glasses);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(glasses.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(glasses);
             }
 
             glassService.CreateGlasses(glasses, brand);
@@ -132,17 +132,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddGlassesFormModel item)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
             var brand = glassService.GetGlassesBrandByName(item);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(item);
             }
 
             glassService.EditGlasses(id, item);

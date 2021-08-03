@@ -63,16 +63,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddReelFormModel reel)
         {
+            
+            if (!this.ModelState.IsValid)
+            {
+                return View(reel);
+            }
+
             var brand = reelService.GetReelBrandByName(reel);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(reel.Brand),"Brand does not exist.");
-            }
-
-            if (!this.ModelState.IsValid)
-            {
-                return View(reel);
             }
 
             reelService.CreateReel(reel, brand);
@@ -133,17 +134,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddReelFormModel item)
         {
+           
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
             var brand = reelService.GetReelBrandByName(item);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(item);
             }
 
             reelService.EditReel(id, item);

@@ -66,17 +66,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddRodFormModel rod)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                return View(rod);
+            }
+
             var brand = rodService.GetRodBrandByName(rod);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(rod.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(rod);
             }
 
             rodService.CreateRod(rod, brand);
@@ -139,18 +139,18 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddRodFormModel item)
-        {
+        {           
+
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
             var brand = rodService.GetRodBrandByName(item);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(item);
             }
 
             rodService.EditRod(id, item);

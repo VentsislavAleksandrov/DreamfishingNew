@@ -127,10 +127,10 @@ namespace DreamFishingNew.Services.Bags
             return model;
         }
 
-        public ICollection<Bag> GetBagsByBrand(string bag, ICollection<Bag> bagsQuery)
+        public ICollection<Bag> GetBagsByBrand(AllBagsQueryModel query, ICollection<Bag> bagsQuery)
         {
               bagsQuery = bagsQuery
-                    .Where(x => x.Brand.Name.ToLower() == bag.ToLower())
+                    .Where(x => x.Brand.Name.ToLower() == query.Brand.ToLower())
                     .ToList();
 
             return bagsQuery;

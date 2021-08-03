@@ -67,17 +67,17 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddLineFormModel line)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                return View(line);
+            }
+
             var brand = lineService.GetLineBrandByName(line);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(line.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(line);
             }
 
             lineService.CreateLine(line, brand);
@@ -138,18 +138,18 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddLineFormModel item)
-        {
+        {           
+
+            if (!ModelState.IsValid)
+            {
+                return View(item);
+            }
+
             var brand = lineService.GetLineBrandByName(item);
 
             if (brand == null)
             {
                 this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
-            }
-
-
-            if (!ModelState.IsValid)
-            {
-                return View(item);
             }
 
             lineService.EditLine(id, item);
