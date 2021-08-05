@@ -51,9 +51,12 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Bags" asp-action="All">Bags</a>
                             </div>
                         </div>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Info" asp-controller="ForUs" asp-action="Index">For Us</a>
+                        </li>
                         @if (User.IsInRole("Administrator"))
                         {
-                            <div class="dropdown offset-2">
+                            <div class="dropdown offset-1">
                                 <button class="btn btn-secondary dropdown-toggle bg-transparent" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Add products and brands
                                 </button>

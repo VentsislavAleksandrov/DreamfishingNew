@@ -1,5 +1,4 @@
-﻿using DreamFishingNew.Data;
-using DreamFishingNew.Models.Meters;
+﻿using DreamFishingNew.Models.Meters;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Meters;
 using Microsoft.AspNetCore.Authorization;
@@ -10,11 +9,11 @@ namespace DreamFishingNew.Controllers
     using static WebConstants;
     public class MetersController: Controller
     {
-        private ApplicationDbContext data;
+        
         private IMeterService meterService;
-        public MetersController(ApplicationDbContext data, IMeterService meterService)
+        public MetersController( IMeterService meterService)
         {
-            this.data = data;
+            
             this.meterService = meterService;
         }
 

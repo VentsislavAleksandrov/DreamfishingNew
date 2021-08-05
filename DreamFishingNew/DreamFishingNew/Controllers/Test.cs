@@ -16,6 +16,7 @@ namespace DreamFishingNew.Controllers
 
         public void GetPropertyOfUser()
         {
+            
             var UserId = this.User.Id();
 
             var currUser = data.Users.Where(x => x.Id == UserId);

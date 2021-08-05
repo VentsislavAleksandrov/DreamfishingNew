@@ -1,5 +1,4 @@
-﻿using DreamFishingNew.Data;
-using DreamFishingNew.Models.Baits;
+﻿using DreamFishingNew.Models.Baits;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Baits;
 using Microsoft.AspNetCore.Authorization;
@@ -11,11 +10,11 @@ namespace DreamFishingNew.Controllers
 
     public class BaitsController:Controller
     {
-        private ApplicationDbContext data;
+        
         private IBaitService baitService;
-        public BaitsController(ApplicationDbContext data, IBaitService baitService)
+        public BaitsController( IBaitService baitService)
         {
-            this.data = data;
+            
             this.baitService = baitService;
         }
 

@@ -1,5 +1,4 @@
-﻿using DreamFishingNew.Data;
-using DreamFishingNew.Models.Reels;
+﻿using DreamFishingNew.Models.Reels;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Reels;
 using Microsoft.AspNetCore.Authorization;
@@ -11,12 +10,12 @@ namespace DreamFishingNew.Controllers
 
     public class ReelsController: Controller
     {
-        private ApplicationDbContext data;
+        
         private IReelService reelService;
 
-        public ReelsController(ApplicationDbContext data, IReelService reelService)
+        public ReelsController( IReelService reelService)
         {
-            this.data = data;
+            
             this.reelService = reelService;
         }
 

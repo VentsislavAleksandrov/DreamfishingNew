@@ -1,5 +1,4 @@
-﻿using DreamFishingNew.Data;
-using DreamFishingNew.Models.Glasses;
+﻿using DreamFishingNew.Models.Glasses;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Glass;
 using Microsoft.AspNetCore.Authorization;
@@ -11,12 +10,12 @@ namespace DreamFishingNew.Controllers
 
     public class GlassesController: Controller
     {
-        private ApplicationDbContext data;
+        
         private IGlassService glassService;
 
-        public GlassesController(ApplicationDbContext data, IGlassService glassService)
+        public GlassesController( IGlassService glassService)
         {
-            this.data = data;
+            
             this.glassService = glassService;
         }
 

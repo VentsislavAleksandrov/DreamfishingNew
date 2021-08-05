@@ -1,5 +1,4 @@
-﻿using DreamFishingNew.Data;
-using DreamFishingNew.Models.Lines;
+﻿using DreamFishingNew.Models.Lines;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Lines;
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +11,11 @@ namespace DreamFishingNew.Controllers
 
     public class LinesController: Controller
     {
-        private ApplicationDbContext data;
+        
         private ILineService lineService;
-        public LinesController(ApplicationDbContext data, ILineService lineService)
+        public LinesController( ILineService lineService)
         {
-            this.data = data;
+            
             this.lineService = lineService;
         }
 

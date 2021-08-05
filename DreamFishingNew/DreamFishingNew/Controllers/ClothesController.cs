@@ -1,5 +1,4 @@
-﻿using DreamFishingNew.Data;
-using DreamFishingNew.Models.Clothes;
+﻿using DreamFishingNew.Models.Clothes;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Cloth;
 using Microsoft.AspNetCore.Authorization;
@@ -11,11 +10,11 @@ namespace DreamFishingNew.Controllers
 
     public class ClothesController: Controller
     {
-        private ApplicationDbContext data;
+         
         private IClothService clothService;
-        public ClothesController(ApplicationDbContext data, IClothService clothService)
+        public ClothesController(IClothService clothService)
         {
-            this.data = data;
+            
             this.clothService = clothService;
         }
 

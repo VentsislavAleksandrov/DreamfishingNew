@@ -1,12 +1,8 @@
-﻿using DreamFishingNew.Data;
-using DreamFishingNew.Data.Models;
-using DreamFishingNew.Models.Rods;
+﻿using DreamFishingNew.Models.Rods;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Rods;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
@@ -14,14 +10,14 @@ namespace DreamFishingNew.Controllers
 
     public class RodsController: Controller
     {
-        private ApplicationDbContext data;
+        
         private IRodService rodService;
-        public RodsController(ApplicationDbContext data, IRodService rodService)
+        public RodsController( IRodService rodService)
         {
-            this.data = data;
+            
             this.rodService = rodService;
         }
-        //Cannot convert type System.Security.Claims.ClaimsPrincipal to DreamfishingNew.Data.Models.ApplicationUser
+        
         public IActionResult All([FromQuery] AllRodsQueryModel query)
         {
 

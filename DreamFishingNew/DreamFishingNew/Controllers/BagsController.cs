@@ -1,5 +1,4 @@
-﻿using DreamFishingNew.Data;
-using DreamFishingNew.Models.Bags;
+﻿using DreamFishingNew.Models.Bags;
 using DreamFishingNew.Models.Shared;
 using DreamFishingNew.Services.Bags;
 using Microsoft.AspNetCore.Authorization;
@@ -11,13 +10,13 @@ namespace DreamFishingNew.Controllers
 
     public class BagsController: Controller
     {
-        private ApplicationDbContext data;
+        
         private IBagService bagService;
 
 
-        public BagsController(ApplicationDbContext data, IBagService bagService)
+        public BagsController( IBagService bagService)
         {
-            this.data = data;
+            
             this.bagService = bagService;
 
         }
