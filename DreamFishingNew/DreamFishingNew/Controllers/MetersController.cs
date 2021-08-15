@@ -99,7 +99,7 @@ namespace DreamFishingNew.Controllers
         }
 
         [Authorize]
-        public IActionResult AddtoCart(int id, string userId)
+        public IActionResult AddtoCart(int id)
         {
             //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currMeter = meterService.GetMeterById(id);
