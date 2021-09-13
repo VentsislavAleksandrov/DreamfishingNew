@@ -9,13 +9,11 @@ namespace DreamFishingNew.Controllers
     using static WebConstants;
 
     public class GlassesController: Controller
-    {
-        
+    {        
         private IGlassService glassService;
 
         public GlassesController( IGlassService glassService)
-        {
-            
+        {            
             this.glassService = glassService;
         }
 
@@ -60,8 +58,7 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddGlassesFormModel glasses)
-        {
-            
+        {            
             if (!ModelState.IsValid)
             {
                 return View(glasses);
@@ -81,9 +78,7 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
-
             var glasses = glassService.GetGlassesById(id);
-
 
             var model = new GlassesDetailsViewModel
             {
@@ -103,7 +98,6 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id)
         {
-            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currGlasses = glassService.GetGlassesById(id);
 
             glassService.DecrementGlassesQuantity(currGlasses);
@@ -130,8 +124,7 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddGlassesFormModel item)
-        {
-            
+        {            
             if (!ModelState.IsValid)
             {
                 return View(item);

@@ -17,7 +17,5 @@
         public string Description { get; set; }
 
         public int Weight { get; set; }
-
-
     }
 }

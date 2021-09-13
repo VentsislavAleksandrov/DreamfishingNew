@@ -9,12 +9,10 @@ namespace DreamFishingNew.Controllers
     using static WebConstants;
 
     public class ClothesController: Controller
-    {
-         
+    {         
         private IClothService clothService;
         public ClothesController(IClothService clothService)
-        {
-            
+        {            
             this.clothService = clothService;
         }
 
@@ -59,8 +57,7 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddClothesFormModel clothes)
-        {
-            
+        {            
             if (!ModelState.IsValid)
             {
                 return View(clothes);
@@ -80,9 +77,7 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
-
             var clothes = clothService.GetClothesById(id);
-
 
             var model = new ClothesDetailsViewModel
             {
@@ -105,7 +100,6 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id)
         {
-            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currClothes = clothService.GetClothesById(id);
 
             clothService.DecrementClothesQuantity(currClothes);
@@ -132,8 +126,7 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddClothesFormModel item)
-        {
-            
+        {            
             if (!ModelState.IsValid)
             {
                 return View(item);
@@ -154,7 +147,6 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Delete(int id)
         {
-
             var clothes = clothService.GetClothesById(id);
 
             clothService.DeleteClothes(clothes);

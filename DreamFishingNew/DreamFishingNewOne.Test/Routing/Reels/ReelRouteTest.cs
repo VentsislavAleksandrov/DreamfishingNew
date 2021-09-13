@@ -24,7 +24,6 @@ namespace DreamFishingNewOne.Test.Routing.Reels
             .WithMethod(HttpMethod.Post))
             .To<ReelsController>(x => x.Add());
 
-
         [Fact]
         public void GetAddRouteShouldMatch()
             => MyRouting

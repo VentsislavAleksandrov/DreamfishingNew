@@ -1,16 +1,13 @@
 ﻿@using DreamFishingNew.Models.Bags
-@using DreamFishingNew.Infrastructure;
 
 @model AllBagsQueryModel
 
 <form method="get">
     <div class="row mb-5">
-
         <div class="form-group col-md-3">
             <label asp-for="SearchTerm"></label>
             <input asp-for="SearchTerm" class="form-control" placeholder="Enter key word here...">
         </div>
-
         <div class="form-group col-md-3">
             <div class="form-group">
                 <label asp-for="Brand"></label>
@@ -23,9 +20,7 @@
                 </select>
             </div>
         </div>
-
         <div class="form-group col-md-3">
-
             <div class="form-group">
                 <label asp-for="Sorting"></label>
                 <select asp-for="Sorting" class="form-control">
@@ -35,18 +30,12 @@
                 </select>
             </div>
         </div>
-
         <div class="form-group col-md-3">
             <input class="btn btn-primary" type="submit" value="Search" />
         </div>
-
     </div>
 </form>
-
 <div class="row">
-
-
-
     @foreach (var bag in Model.Bags)
     {
         <div class="col-md-4">
@@ -56,20 +45,15 @@
                     <h5 class="card-title">@bag.Brand @bag.Model</h5>
                     <p class="card-text">@bag.Price</p>
                     <span><a asp-controller="Bags" asp-action="Details" asp-route-id="@bag.Id" class="btn btn-info">More</a></span>
-                    
                     @if (User.IsInRole("Administrator"))
                     {
                         <span><a asp-controller="Bags" asp-action="Edit" asp-route-id="@bag.Id" class="btn btn-warning">Edit</a></span>
                         <span><a asp-controller="Bags" asp-action="Delete" asp-route-id="@bag.Id" class="btn btn-danger">Delete</a></span>
                     }
-
                 </div>
             </div>
         </div>
     }
-
-
-
 </div>
 
 @{

@@ -32,8 +32,6 @@ namespace DreamFishingNew.Services.Bags
 
             data.Bags.Add(currentBag);
             data.SaveChanges();
-
-           
         }
 
         public void DecrementBagQuantity(Bag currBag)
@@ -111,16 +109,16 @@ namespace DreamFishingNew.Services.Bags
         {
             var model = data.Bags
                 .Where(x => x.Id == id)
-                .Select(x => new AddBagFormModel 
+                .Select(x => new AddBagFormModel
                 {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Size = x.Size,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity
+                    Model = x.Model,
+                    Brand = x.Brand.Name,
+                    Size = x.Size,
+                    Weight = x.Weight,
+                    Description = x.Description,
+                    Image = x.Image,
+                    Price = x.Price,
+                    Quantity = x.Quantity
                 })
                 .FirstOrDefault();
 
@@ -129,9 +127,9 @@ namespace DreamFishingNew.Services.Bags
 
         public ICollection<Bag> GetBagsByBrand(AllBagsQueryModel query, ICollection<Bag> bagsQuery)
         {
-              bagsQuery = bagsQuery
-                    .Where(x => x.Brand.Name.ToLower() == query.Brand.ToLower())
-                    .ToList();
+            bagsQuery = bagsQuery
+                  .Where(x => x.Brand.Name.ToLower() == query.Brand.ToLower())
+                  .ToList();
 
             return bagsQuery;
         }
@@ -139,7 +137,7 @@ namespace DreamFishingNew.Services.Bags
         public ICollection<BagListingViewModel> GetBagsByPage(AllBagsQueryModel query, ICollection<Bag> bagsQuery)
         {
             var bags = bagsQuery
-                .Skip((query.currentPage -1) * AllBagsQueryModel.BagsPerPage)
+                .Skip((query.currentPage - 1) * AllBagsQueryModel.BagsPerPage)
                 .Take(AllBagsQueryModel.BagsPerPage)
                 .Select(x => new BagListingViewModel
                 {
@@ -156,11 +154,11 @@ namespace DreamFishingNew.Services.Bags
 
         public ICollection<Bag> GetBagsBySearchTerm(string searchterm, ICollection<Bag> bagsQuery)
         {
-             bagsQuery = bagsQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(searchterm.ToLower())
-                    ||x.Description.ToLower().Contains(searchterm.ToLower())
-                    )
-                    .ToList();
+            bagsQuery = bagsQuery
+                   .Where(x => (x.Brand.Name + " " + x.Model).ToLower()
+                   .Contains(searchterm.ToLower())|| x.Description.ToLower()
+                   .Contains(searchterm.ToLower()))
+                   .ToList();
 
             return bagsQuery;
         }

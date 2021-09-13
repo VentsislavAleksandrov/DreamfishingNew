@@ -30,16 +30,11 @@ namespace DreamFishingNew.Data
         public DbSet<Reel> Reels { get; set; }
 
         public DbSet<Rod> Rods { get; set; }
-
-        
-
-
+       
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
            
-
             builder.Entity<Bag>()
             .Property(b => b.Price)
             .HasPrecision(14, 2);

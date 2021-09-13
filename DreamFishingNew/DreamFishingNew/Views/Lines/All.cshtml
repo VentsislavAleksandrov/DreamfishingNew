@@ -4,12 +4,10 @@
 
 <form method="get">
     <div class="row mb-5">
-
         <div class="form-group col-md-3">
             <label asp-for="SearchTerm"></label>
             <input asp-for="SearchTerm" class="form-control" placeholder="Enter key word here...">
         </div>
-
         <div class="form-group col-md-3">
             <div class="form-group">
                 <label asp-for="Brand"></label>
@@ -22,9 +20,7 @@
                 </select>
             </div>
         </div>
-
         <div class="form-group col-md-3">
-
             <div class="form-group">
                 <label asp-for="Sorting"></label>
                 <select asp-for="Sorting" class="form-control">
@@ -34,18 +30,13 @@
                 </select>
             </div>
         </div>
-
         <div class="form-group col-md-3">
             <input class="btn btn-primary" type="submit" value="Search" />
         </div>
-
     </div>
 </form>
 
 <div class="row">
-
-
-
     @foreach (var line in Model.Lines)
     {
         <div class="col-md-4">
@@ -60,14 +51,10 @@
                         <span><a asp-controller="Lines" asp-action="Edit" asp-route-id="@line.Id" class="btn btn-warning">Edit</a></span>
                         <span><a asp-controller="Lines" asp-action="Delete" asp-route-id="@line.Id" class="btn btn-danger">Delete</a></span>
                     }
-
                 </div>
             </div>
         </div>
     }
-
-
-
 </div>
 
 @{
@@ -77,7 +64,6 @@
         previousPage = 1;
     }
 }
-
 <div class="row">
     <div class="col-md-6">
         <a class="btn btn-primary "

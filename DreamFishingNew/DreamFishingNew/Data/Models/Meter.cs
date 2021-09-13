@@ -2,7 +2,7 @@
 {
     public class Meter
     {
-         public int Id { get; set; }
+        public int Id { get; set; }
 
         public string Model { get; set; }
 

@@ -85,18 +85,18 @@ namespace DreamFishingNew.Services.Glass
 
         public ICollection<GlassesListingViewModel> GetGlassesByPage(AllGlassesQueryModel query, ICollection<Glasses> glassesQuery)
         {
-           var glassesByPage = glassesQuery
-                .Skip((query.currentPage -1) * AllGlassesQueryModel.GlassesPerPage)
-                .Take(AllGlassesQueryModel.GlassesPerPage)
-                .Select(x => new GlassesListingViewModel
-                {
-                    Id = x.Id,
-                    Model = x.Model,
-                    Brand = x.Brand.Name,
-                    Image = x.Image,
-                    Price = x.Price,
-                })
-                .ToList();
+            var glassesByPage = glassesQuery
+                 .Skip((query.currentPage - 1) * AllGlassesQueryModel.GlassesPerPage)
+                 .Take(AllGlassesQueryModel.GlassesPerPage)
+                 .Select(x => new GlassesListingViewModel
+                 {
+                     Id = x.Id,
+                     Model = x.Model,
+                     Brand = x.Brand.Name,
+                     Image = x.Image,
+                     Price = x.Price,
+                 })
+                 .ToList();
 
             return glassesByPage;
         }
@@ -104,9 +104,9 @@ namespace DreamFishingNew.Services.Glass
         public ICollection<Glasses> GetGlassesBySearchTerm(AllGlassesQueryModel query, ICollection<Glasses> glassesQuery)
         {
             glassesQuery = glassesQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower()
+                    .Contains(query.SearchTerm.ToLower()) || x.Description.ToLower()
+                    .Contains(query.SearchTerm.ToLower()))
                     .ToList();
 
             return glassesQuery;
@@ -127,19 +127,19 @@ namespace DreamFishingNew.Services.Glass
 
         public AddGlassesFormModel GetGlassesEditFormModel(int id)
         {
-             var model = data.Glasses
-                .Where(x => x.Id == id)
-                .Select(x => new AddGlassesFormModel 
-                {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity
-                })
-                .FirstOrDefault();
+            var model = data.Glasses
+               .Where(x => x.Id == id)
+               .Select(x => new AddGlassesFormModel
+               {
+                   Model = x.Model,
+                   Brand = x.Brand.Name,
+                   Weight = x.Weight,
+                   Description = x.Description,
+                   Image = x.Image,
+                   Price = x.Price,
+                   Quantity = x.Quantity
+               })
+               .FirstOrDefault();
 
             return model;
         }

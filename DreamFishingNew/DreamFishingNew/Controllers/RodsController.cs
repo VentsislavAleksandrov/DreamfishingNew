@@ -8,19 +8,16 @@ namespace DreamFishingNew.Controllers
 {
     using static WebConstants;
 
-    public class RodsController: Controller
+    public class RodsController : Controller
     {
-        
         private IRodService rodService;
-        public RodsController( IRodService rodService)
+        public RodsController(IRodService rodService)
         {
-            
             this.rodService = rodService;
         }
-        
+
         public IActionResult All([FromQuery] AllRodsQueryModel query)
         {
-
             var rodsQuery = rodService.GetAllRods();
 
             if (!string.IsNullOrWhiteSpace(query.Brand))
@@ -62,7 +59,6 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddRodFormModel rod)
         {
-            
             if (!ModelState.IsValid)
             {
                 return View(rod);
@@ -82,9 +78,7 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
-
             var rod = rodService.GetRodById(id);
-
 
             var model = new RodDetailsViewModel
             {
@@ -108,7 +102,6 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id)
         {
-            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currRod = rodService.GetRodById(id);
 
             rodService.DecrementRodQuantity(currRod);
@@ -117,10 +110,10 @@ namespace DreamFishingNew.Controllers
             {
                 Model = currRod.Model,
                 Brand = currRod.Brand.Name,
-                Image = currRod.Image, 
+                Image = currRod.Image,
                 Quantity = currRod.Quantity
             };
-           
+
             return View(rodModel);
         }
 
@@ -135,8 +128,7 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddRodFormModel item)
-        {           
-
+        {
             if (!ModelState.IsValid)
             {
                 return View(item);

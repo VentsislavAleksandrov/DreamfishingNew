@@ -10,11 +10,10 @@ namespace DreamFishingNew.Controllers
 
     public class BaitsController:Controller
     {
-        
         private IBaitService baitService;
+
         public BaitsController( IBaitService baitService)
-        {
-            
+        {            
             this.baitService = baitService;
         }
 
@@ -38,7 +37,6 @@ namespace DreamFishingNew.Controllers
 
             var baitBrands = baitService.GetBiteBrands();
 
-
             var model = new AllBaitsQueryModel
             {
                 Brand = query.Brand,
@@ -61,7 +59,6 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBaitFormModel bait)
         {
-
             if (!ModelState.IsValid)
             {
                 return View(bait);
@@ -81,9 +78,7 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
-
             var bait = baitService.GetBaitById(id);
-
 
             var model = new BaitDetailsViewModel
             {
@@ -105,7 +100,6 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id)
         {
-            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currBait = baitService.GetBaitById(id);
 
             baitService.DecrementBaitQuantity(currBait);
@@ -132,8 +126,7 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddBaitFormModel item)
-        {
-            
+        {            
             if (!ModelState.IsValid)
             {
                 return View(item);

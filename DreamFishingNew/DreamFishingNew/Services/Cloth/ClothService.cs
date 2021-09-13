@@ -34,8 +34,6 @@ namespace DreamFishingNew.Services.Cloth
 
             data.Clothes.Add(currentClothes);
             data.SaveChanges();
-
-            
         }
 
         public void DecrementClothesQuantity(Clothes currClothes)
@@ -129,7 +127,7 @@ namespace DreamFishingNew.Services.Cloth
         public ICollection<ClothesListingViewModel> GetClothesByPage(ICollection<Clothes> clothesQuery, AllClothesQueryModel query)
         {
             var clothes = clothesQuery
-                .Skip((query.currentPage -1) * AllClothesQueryModel.ClothesPerPage)
+                .Skip((query.currentPage - 1) * AllClothesQueryModel.ClothesPerPage)
                 .Take(AllClothesQueryModel.ClothesPerPage)
                 .Select(x => new ClothesListingViewModel
                 {
@@ -147,9 +145,9 @@ namespace DreamFishingNew.Services.Cloth
         public ICollection<Clothes> GetClothesBySerchrTerm(ICollection<Clothes> clothesQuery, AllClothesQueryModel query)
         {
             clothesQuery = clothesQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower()
+                    .Contains(query.SearchTerm.ToLower())|| x.Description.ToLower()
+                    .Contains(query.SearchTerm.ToLower()))
                     .ToList();
 
             return clothesQuery;
@@ -172,18 +170,18 @@ namespace DreamFishingNew.Services.Cloth
         {
             var model = data.Clothes
                 .Where(x => x.Id == id)
-                .Select(x => new AddClothesFormModel 
+                .Select(x => new AddClothesFormModel
                 {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                Material = x.Material,
-                Size = x.Size,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity,
-                Waterproof = x.Waterproof ? "yes" : "no"
+                    Model = x.Model,
+                    Brand = x.Brand.Name,
+                    Material = x.Material,
+                    Size = x.Size,
+                    Weight = x.Weight,
+                    Description = x.Description,
+                    Image = x.Image,
+                    Price = x.Price,
+                    Quantity = x.Quantity,
+                    Waterproof = x.Waterproof ? "yes" : "no"
                 })
                 .FirstOrDefault();
 

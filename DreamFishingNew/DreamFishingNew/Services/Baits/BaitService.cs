@@ -161,9 +161,9 @@ namespace DreamFishingNew.Services.Baits
         public ICollection<Bait> GetBaitsBySearchTerm(ICollection<Bait> baitsQuery, AllBaitsQueryModel query)
         {
             baitsQuery = baitsQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower()
+                    .Contains(query.SearchTerm.ToLower())||x.Description.ToLower()
+                    .Contains(query.SearchTerm.ToLower()))
                     .ToList();
 
             return baitsQuery;

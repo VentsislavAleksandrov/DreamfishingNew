@@ -6,7 +6,6 @@ namespace DreamFishingNew.Data.Models
     {
         public int Id { get; set; }
 
-
         public ICollection<Bag> Bags { get; set; } = new List<Bag>();
 
         public ICollection<Bait> Baits { get; set; } = new List<Bait>();

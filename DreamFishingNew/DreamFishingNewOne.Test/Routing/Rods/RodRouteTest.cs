@@ -24,7 +24,6 @@ namespace DreamFishingNewOne.Test.Routing.Rods
             .WithMethod(HttpMethod.Post))
             .To<RodsController>(x => x.Add());
 
-
         [Fact]
         public void GetAddRouteShouldMatch()
             => MyRouting

@@ -7,17 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace DreamFishingNew.Controllers
 {
     using static WebConstants;
-    public class MetersController: Controller
+    public class MetersController : Controller
     {
-        
         private IMeterService meterService;
-        public MetersController( IMeterService meterService)
+        public MetersController(IMeterService meterService)
         {
-            
             this.meterService = meterService;
         }
 
-        public IActionResult All([FromQuery]AllMetersQueryModel query)
+        public IActionResult All([FromQuery] AllMetersQueryModel query)
         {
             var metersQuery = meterService.GetAllMeters();
 
@@ -59,7 +57,6 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddMeterFormModel meter)
         {
-            
             if (!ModelState.IsValid)
             {
                 return View(meter);
@@ -81,7 +78,6 @@ namespace DreamFishingNew.Controllers
         {
             var meter = meterService.GetMeterById(id);
 
-
             var model = new MeterDetailsViewModel
             {
                 Id = meter.Id,
@@ -101,7 +97,6 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id)
         {
-            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currMeter = meterService.GetMeterById(id);
 
             meterService.DecrementMeterQuantity(currMeter);
@@ -110,10 +105,10 @@ namespace DreamFishingNew.Controllers
             {
                 Model = currMeter.Model,
                 Brand = currMeter.Brand.Name,
-                Image = currMeter.Image, 
+                Image = currMeter.Image,
                 Quantity = currMeter.Quantity
             };
-          
+
             return View(meterModel);
         }
 
@@ -128,8 +123,7 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddMeterFormModel item)
-        {          
-
+        {
             if (!ModelState.IsValid)
             {
                 return View(item);
@@ -142,7 +136,7 @@ namespace DreamFishingNew.Controllers
                 this.ModelState.AddModelError(nameof(item.Brand), "Brand does not exist.");
             }
 
-            meterService.EditMeter(id,item);
+            meterService.EditMeter(id, item);
 
             return RedirectToAction("All", "Meters");
         }

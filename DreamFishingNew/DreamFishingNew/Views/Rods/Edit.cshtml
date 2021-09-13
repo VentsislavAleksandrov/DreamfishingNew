@@ -9,7 +9,6 @@
 <div class="row">
     <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
         <h2 class="heading-margin text-center">Edit Rod</h2>
-
         <form method="post">
             <div class="form-group">
                 <label asp-for="Brand"></label>
@@ -66,8 +65,6 @@
                 <input asp-for="Type" class="form-control" placeholder="@Model.Type">
                 <span asp-validation-for="Type" class="small text-danger"></span>
             </div>
-
-
             <input class="btn btn-primary" type="submit" value="Save" />
         </form>
     </div>

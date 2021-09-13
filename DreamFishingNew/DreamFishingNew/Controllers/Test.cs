@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DreamFishingNew.Controllers
 {
-    public class TestController: Controller
+    public class TestController : Controller
     {
         private ApplicationDbContext data;
 
@@ -16,7 +16,6 @@ namespace DreamFishingNew.Controllers
 
         public void GetPropertyOfUser()
         {
-            
             var UserId = this.User.Id();
 
             var currUser = data.Users.Where(x => x.Id == UserId);

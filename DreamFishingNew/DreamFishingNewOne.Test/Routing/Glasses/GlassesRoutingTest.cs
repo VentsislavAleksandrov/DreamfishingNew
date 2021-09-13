@@ -24,7 +24,6 @@ namespace DreamFishingNewOne.Test.Routing.Glasses
             .WithMethod(HttpMethod.Post))
             .To<GlassesController>(x => x.Add());
 
-
         [Fact]
         public void GetAddRouteShouldMatch()
             => MyRouting

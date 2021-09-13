@@ -161,9 +161,9 @@ namespace DreamFishingNew.Services.Meters
         public ICollection<Meter> GetMetersBySearchTerm(ICollection<Meter> metersQuery, AllMetersQueryModel query)
         {
             metersQuery = metersQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower()
+                    .Contains(query.SearchTerm.ToLower())||x.Description.ToLower()
+                    .Contains(query.SearchTerm.ToLower()))
                     .ToList();
 
             return metersQuery;

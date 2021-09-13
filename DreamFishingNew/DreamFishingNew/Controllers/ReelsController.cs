@@ -8,18 +8,16 @@ namespace DreamFishingNew.Controllers
 {
     using static WebConstants;
 
-    public class ReelsController: Controller
+    public class ReelsController : Controller
     {
-        
         private IReelService reelService;
 
-        public ReelsController( IReelService reelService)
+        public ReelsController(IReelService reelService)
         {
-            
             this.reelService = reelService;
         }
 
-        public IActionResult All([FromQuery]AllReelsQueryModel query)
+        public IActionResult All([FromQuery] AllReelsQueryModel query)
         {
             var reelsQuery = reelService.GetAllReels();
 
@@ -39,7 +37,6 @@ namespace DreamFishingNew.Controllers
 
             var reelBrands = reelService.GetReelBrands();
 
-
             var model = new AllReelsQueryModel
             {
                 Brand = query.Brand,
@@ -51,7 +48,7 @@ namespace DreamFishingNew.Controllers
 
             return View(model);
         }
-        
+
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add()
         {
@@ -62,7 +59,6 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddReelFormModel reel)
         {
-            
             if (!this.ModelState.IsValid)
             {
                 return View(reel);
@@ -72,12 +68,12 @@ namespace DreamFishingNew.Controllers
 
             if (brand == null)
             {
-                this.ModelState.AddModelError(nameof(reel.Brand),"Brand does not exist.");
+                this.ModelState.AddModelError(nameof(reel.Brand), "Brand does not exist.");
             }
 
             reelService.CreateReel(reel, brand);
 
-            return RedirectToAction("Add","Reels");
+            return RedirectToAction("Add", "Reels");
         }
 
         public IActionResult Details(int id)
@@ -105,7 +101,6 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id)
         {
-            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currReel = reelService.GetReelById(id);
 
             reelService.DecrementReelQuantity(currReel);
@@ -114,15 +109,15 @@ namespace DreamFishingNew.Controllers
             {
                 Model = currReel.Model,
                 Brand = currReel.Brand.Name,
-                Image = currReel.Image, 
+                Image = currReel.Image,
                 Quantity = currReel.Quantity
             };
-           
+
             return View(reelModel);
         }
 
         [Authorize(Roles = AdministratorRoleName)]
-         public IActionResult Edit(int id)
+        public IActionResult Edit(int id)
         {
             var model = reelService.GetReelEditModel(id);
 
@@ -133,7 +128,6 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddReelFormModel item)
         {
-           
             if (!ModelState.IsValid)
             {
                 return View(item);

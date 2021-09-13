@@ -3,13 +3,11 @@
 @model AllRodsQueryModel
 
 <form method="get">
-
     <div class="row mb-5">
         <div class="form-group col-md-3">
             <label asp-for="SearchTerm"></label>
             <input asp-for="SearchTerm" class="form-control" placeholder="Enter key word here...">
         </div>
-
         <div class="form-group col-md-3">
             <div class="form-group">
                 <label asp-for="Brand"></label>
@@ -22,7 +20,6 @@
                 </select>
             </div>
         </div>
-
         <div class="form-group col-md-3">
             <div class="form-group">
                 <label asp-for="Sorting"></label>
@@ -34,45 +31,35 @@
                 </select>
             </div>
         </div>
-
         <div class="form-group col-md-3">
             <input class="btn btn-primary" type="submit" value="Search" />
         </div>
-
     </div>
 </form>
 
 <div class="row">
-
-    
-
     @foreach (var rod in Model.Rods)
     {
-    <div class="col-md-4">
-        <div class="card mb-3">
-            <img class="card-img-top mb-3" src="@rod.Image" alt="Card image cap">
-            <div class="card-body">
-                <h5 class="card-title">@rod.Brand @rod.Model</h5>
-                <p class="card-text">@rod.Type</p>
-                <p class="card-text">@rod.Price</p>
-                <span> <a asp-controller="Rods" asp-action="Details" asp-route-id="@rod.Id" class="btn btn-info">More</a> </span>
-                @if (User.IsInRole("Administrator"))
-                {
-                    <span> <a asp-controller="Rods" asp-action="Edit" asp-route-id="@rod.Id" class="btn btn-warning">Edit</a> </span>
-                    <span> <a asp-controller="Rods" asp-action="Delete" asp-route-id="@rod.Id" class="btn btn-danger">Delete</a> </span>
-                }
-
-
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <img class="card-img-top mb-3" src="@rod.Image" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">@rod.Brand @rod.Model</h5>
+                    <p class="card-text">@rod.Type</p>
+                    <p class="card-text">@rod.Price</p>
+                    <span> <a asp-controller="Rods" asp-action="Details" asp-route-id="@rod.Id" class="btn btn-info">More</a> </span>
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <span> <a asp-controller="Rods" asp-action="Edit" asp-route-id="@rod.Id" class="btn btn-warning">Edit</a> </span>
+                        <span> <a asp-controller="Rods" asp-action="Delete" asp-route-id="@rod.Id" class="btn btn-danger">Delete</a> </span>
+                    }
+                </div>
             </div>
         </div>
-    </div>
-     }
+    }
+</div>
 
-        
-
-    </div>
-
-@{ 
+@{
     var previousPage = Model.CurrentPage - 1;
     if (previousPage < 1)
     {
@@ -82,17 +69,17 @@
 
 <div class="row">
     <div class="col-md-6">
-        <a class="btn btn-primary " 
-           asp-controller="Rods" 
-           asp-action="All" 
+        <a class="btn btn-primary "
+           asp-controller="Rods"
+           asp-action="All"
            asp-route-currentPage="@previousPage"
            asp-route-brand="@Model.Brand"
            asp-route-searchTerm="@Model.SearchTerm"
            asp-route-sorting="@((int)Model.Sorting)"><<</a>
     </div>
     <div class="col-md-6">
-        <a class="btn btn-primary float-right"  
-           asp-controller="Rods" asp-action="All" 
+        <a class="btn btn-primary float-right"
+           asp-controller="Rods" asp-action="All"
            asp-route-currentPage="@(Model.CurrentPage + 1)"
            asp-route-brand="@Model.Brand"
            asp-route-searchTerm="@Model.SearchTerm"

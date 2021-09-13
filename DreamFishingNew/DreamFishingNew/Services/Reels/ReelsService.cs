@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace DreamFishingNew.Services.Reels
 {
-    public class ReelsService: IReelService
+    public class ReelsService : IReelService
     {
         private ApplicationDbContext data;
 
@@ -30,7 +30,7 @@ namespace DreamFishingNew.Services.Reels
                 LineCapacity = reel.LineCapacity,
                 Weight = reel.Weight,
                 BalbearingsCount = reel.BalbearingsCount
-                
+
             };
 
             data.Reels.Add(currentReel);
@@ -118,22 +118,22 @@ namespace DreamFishingNew.Services.Reels
 
         public AddReelFormModel GetReelEditModel(int id)
         {
-           var model = data.Reels
-                .Where(x => x.Id == id)
-                .Select(x => new AddReelFormModel 
-                {
-                Model = x.Model,
-                Brand = x.Brand.Name,
-                GearRatio = x.GearRatio,
-                BalbearingsCount = x.BalbearingsCount,
-                LineCapacity = x.LineCapacity,
-                Weight = x.Weight,
-                Description = x.Description,
-                Image = x.Image,
-                Price = x.Price,
-                Quantity = x.Quantity
-                })
-                .FirstOrDefault();
+            var model = data.Reels
+                 .Where(x => x.Id == id)
+                 .Select(x => new AddReelFormModel
+                 {
+                     Model = x.Model,
+                     Brand = x.Brand.Name,
+                     GearRatio = x.GearRatio,
+                     BalbearingsCount = x.BalbearingsCount,
+                     LineCapacity = x.LineCapacity,
+                     Weight = x.Weight,
+                     Description = x.Description,
+                     Image = x.Image,
+                     Price = x.Price,
+                     Quantity = x.Quantity
+                 })
+                 .FirstOrDefault();
 
             return model;
         }
@@ -150,7 +150,7 @@ namespace DreamFishingNew.Services.Reels
         public ICollection<ReelListingViewModel> GetReelsByPage(ICollection<Reel> reelsQuery, AllReelsQueryModel query)
         {
             var reelsByPage = reelsQuery
-                .Skip((query.currentPage -1) * AllReelsQueryModel.ReelsPerPage)
+                .Skip((query.currentPage - 1) * AllReelsQueryModel.ReelsPerPage)
                 .Take(AllReelsQueryModel.ReelsPerPage)
                 .Select(x => new ReelListingViewModel
                 {
@@ -168,9 +168,9 @@ namespace DreamFishingNew.Services.Reels
         public ICollection<Reel> GetReelsBySearchTerm(ICollection<Reel> reelsQuery, AllReelsQueryModel query)
         {
             reelsQuery = reelsQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower()
+                    .Contains(query.SearchTerm.ToLower()) || x.Description.ToLower()
+                    .Contains(query.SearchTerm.ToLower()))
                     .ToList();
 
             return reelsQuery;

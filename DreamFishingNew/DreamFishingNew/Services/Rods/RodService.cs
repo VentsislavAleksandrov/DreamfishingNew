@@ -171,7 +171,8 @@ namespace DreamFishingNew.Services.Rods
         public ICollection<Rod> GetRodsBySearchTerm(ICollection<Rod> rodsQuery, AllRodsQueryModel query)
         {
             rodsQuery = rodsQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower()
+                    .Contains(query.SearchTerm.ToLower())
                     || x.Type.ToLower().Contains(query.SearchTerm.ToLower())
                     || x.Description.ToLower().Contains(query.SearchTerm.ToLower())
                     )

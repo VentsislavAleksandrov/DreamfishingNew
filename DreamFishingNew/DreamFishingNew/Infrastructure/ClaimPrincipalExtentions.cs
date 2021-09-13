@@ -6,7 +6,5 @@ namespace DreamFishingNew.Infrastructure
     {
         public static string Id(this ClaimsPrincipal user)
             => user.FindFirst(ClaimTypes.NameIdentifier).Value;
-    }
-
-    
+    }    
 }

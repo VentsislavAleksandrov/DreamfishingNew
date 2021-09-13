@@ -14,9 +14,7 @@ namespace DreamFishingNew.Infrastructure
     {
         public static IApplicationBuilder PrepareDatabase(
             this IApplicationBuilder app)
-        {
-            
-
+        {            
             using var scopedServices = app.ApplicationServices.CreateScope();
             var serviceProvider = scopedServices.ServiceProvider;
 
@@ -25,13 +23,11 @@ namespace DreamFishingNew.Infrastructure
             data.Database.Migrate();
             SeedAdministrator( serviceProvider);
             
-
             return app;
         }
 
         private static void SeedAdministrator ( IServiceProvider services)
-        {
-            
+        {            
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
@@ -53,18 +49,14 @@ namespace DreamFishingNew.Infrastructure
                     var user = new ApplicationUser
                     {
                         Email = adminEmail,
-                        UserName = adminEmail,
-                        
+                        UserName = adminEmail,                        
                     };
 
                     await userManager.CreateAsync(user, adminPassword);
-
                     await userManager.AddToRoleAsync(user, role.Name);
                 })
                 .GetAwaiter()
                 .GetResult();
-        }
-
-        
+        }        
     }
 }

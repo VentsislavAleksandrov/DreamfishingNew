@@ -6,9 +6,7 @@ using Xunit;
 namespace DreamFishingNewOne.Test.Routing.Bags
 {
     public class BagRoutingTest
-    {
-        
-
+    {       
         [Fact]
         public void AllRouteSouldMatch()
             => MyRouting
@@ -25,7 +23,6 @@ namespace DreamFishingNewOne.Test.Routing.Bags
             .WithPath("/Bags/Add")
             .WithMethod(HttpMethod.Post))
             .To<BagsController>(x => x.Add());
-
 
         [Fact]
         public void GetAddRouteShouldMatch()
@@ -70,7 +67,5 @@ namespace DreamFishingNewOne.Test.Routing.Bags
             .Configuration()
             .ShouldMap("/Bags/Delete/1")
             .To<BagsController>(x => x.Delete(1));
-
-
     }
 }

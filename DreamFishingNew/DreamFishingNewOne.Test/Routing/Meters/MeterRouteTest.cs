@@ -24,7 +24,6 @@ namespace DreamFishingNewOne.Test.Routing.Meters
             .WithMethod(HttpMethod.Post))
             .To<MetersController>(x => x.Add());
 
-
         [Fact]
         public void GetAddRouteShouldMatch()
             => MyRouting

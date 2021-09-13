@@ -10,15 +10,11 @@ namespace DreamFishingNew.Controllers
 
     public class BagsController: Controller
     {
-        
         private IBagService bagService;
-
 
         public BagsController( IBagService bagService)
         {
-            
             this.bagService = bagService;
-
         }
 
         public IActionResult All([FromQuery]AllBagsQueryModel query)
@@ -42,7 +38,6 @@ namespace DreamFishingNew.Controllers
 
             var bagBrands = bagService.GetBagBrands();
 
-
             var model = new AllBagsQueryModel
             {
                 Brand = query.Brand,
@@ -65,8 +60,7 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddBagFormModel bag)
         {
- 
-            if (!ModelState.IsValid)
+             if (!ModelState.IsValid)
             {
                 return View(bag);
             }
@@ -85,9 +79,7 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
-
             var bag = bagService.GetBagById(id);
-
 
             var model = new BagDetailsViewModel
             {
@@ -108,7 +100,6 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id)
         {
-            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currBag = bagService.GetBagById(id);
 
             bagService.DecrementBagQuantity(currBag);
@@ -152,8 +143,7 @@ namespace DreamFishingNew.Controllers
 
             var bag = bagService.GetBagById(id);
 
-            bagService.Editbag(bag, item);
-            
+            bagService.Editbag(bag, item);            
 
             return RedirectToAction("All", "Bags");
         }

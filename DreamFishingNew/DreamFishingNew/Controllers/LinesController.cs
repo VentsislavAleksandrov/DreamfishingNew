@@ -9,17 +9,15 @@ namespace DreamFishingNew.Controllers
 {
     using static WebConstants;
 
-    public class LinesController: Controller
+    public class LinesController : Controller
     {
-        
         private ILineService lineService;
-        public LinesController( ILineService lineService)
+        public LinesController(ILineService lineService)
         {
-            
             this.lineService = lineService;
         }
 
-        public IActionResult All([FromQuery]AllLinesQueryModel query)
+        public IActionResult All([FromQuery] AllLinesQueryModel query)
         {
             var linesQuery = lineService.GetAllLines();
 
@@ -31,9 +29,9 @@ namespace DreamFishingNew.Controllers
             if (!string.IsNullOrWhiteSpace(query.SearchTerm))
             {
                 linesQuery = linesQuery
-                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower().Contains(query.SearchTerm.ToLower())
-                    ||x.Description.ToLower().Contains(query.SearchTerm.ToLower())
-                    )
+                    .Where(x => (x.Brand.Name + " " + x.Model).ToLower()
+                    .Contains(query.SearchTerm.ToLower()) || x.Description.ToLower()
+                    .Contains(query.SearchTerm.ToLower()))
                     .ToList();
             }
 
@@ -66,7 +64,6 @@ namespace DreamFishingNew.Controllers
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Add(AddLineFormModel line)
         {
-            
             if (!ModelState.IsValid)
             {
                 return View(line);
@@ -86,9 +83,7 @@ namespace DreamFishingNew.Controllers
 
         public IActionResult Details(int id)
         {
-
             var line = lineService.GetLineById(id);
-
 
             var model = new LineDetailsViewModel
             {
@@ -110,7 +105,6 @@ namespace DreamFishingNew.Controllers
         [Authorize]
         public IActionResult AddtoCart(int id)
         {
-            //var currUser = data.Users.Where(x => x.Id == userId).FirstOrDefault();
             var currLine = lineService.GetLineById(id);
 
             lineService.DecrementLineQuantity(currLine);
@@ -119,10 +113,10 @@ namespace DreamFishingNew.Controllers
             {
                 Model = currLine.Model,
                 Brand = currLine.Brand.Name,
-                Image = currLine.Image, 
+                Image = currLine.Image,
                 Quantity = currLine.Quantity
             };
-          
+
             return View(lineModel);
         }
 
@@ -137,8 +131,7 @@ namespace DreamFishingNew.Controllers
         [HttpPost]
         [Authorize(Roles = AdministratorRoleName)]
         public IActionResult Edit(int id, AddLineFormModel item)
-        {           
-
+        {
             if (!ModelState.IsValid)
             {
                 return View(item);
